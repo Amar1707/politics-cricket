@@ -779,8 +779,6 @@
         function createCardHTML(cardData, isInHand) {
             if (!cardData) return '';
             
-            const partyClass = cardData.party.replace(/[()]/g, ''); // Remove parentheses from party for CSS class
-            
             return `
                 <div class="card-inner">
                     <div class="card-content card-front">
@@ -801,7 +799,7 @@
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Party:</span>
-                                <span class="detail-value"><span class="party-tag ${partyClass}">${cardData.party}</span></span>
+                                <span class="detail-value">${cardData.party}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Incumbent:</span>
