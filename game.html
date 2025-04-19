@@ -591,7 +591,8 @@
             allCards = {};
             const sampleParties = ['BJP', 'INC', 'AITC', 'DMK', 'YSRCP', 'SHS', 'JD(U)'];
             const sampleStates = ['West Bengal', 'Maharashtra', 'Tamil Nadu', 'Uttar Pradesh', 'Kerala'];
-            const sampleCategories = ['GEN', 'SC', 'ST', 'OBC'];
+            const sampleTypes = ['GEN', 'SC', 'ST', 'OBC'];
+            const sampleCategories = ['A', 'B', 'C', 'D'];
             
             for (let i = 1; i <= 30; i++) {
                 const party = sampleParties[Math.floor(Math.random() * sampleParties.length)];
@@ -611,7 +612,8 @@
                     rank: Math.floor(Math.random() * 3) + 1,
                     constituency: `Constituency ${i}`,
                     state: sampleStates[Math.floor(Math.random() * sampleStates.length)],
-                    constituency_category: sampleCategories[Math.floor(Math.random() * sampleCategories.length)],
+                    type: sampleTypes[Math.floor(Math.random() * sampleTypes.length)],
+                    category: sampleCategories[Math.floor(Math.random() * sampleCategories.length)],
                     voters: Math.floor(800000 + Math.random() * 800000),
                     turnout: Math.round((60 + Math.random() * 25) * 100) / 100,
                     male_turnout: Math.round((60 + Math.random() * 25) * 100) / 100,
@@ -826,8 +828,12 @@
                                 <span class="detail-value">${cardData.state}</span>
                             </div>
                             <div class="detail-row">
+                                <span class="detail-label">Type:</span>
+                                <span class="detail-value">${cardData.type || ''}</span>
+                            </div>
+                            <div class="detail-row">
                                 <span class="detail-label">Category:</span>
-                                <span class="detail-value">${cardData.constituency_category}</span>
+                                <span class="detail-value">${cardData.category || ''}</span>
                             </div>
                             <div class="detail-row">
                                 <span class="detail-label">Voters:</span>
