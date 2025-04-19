@@ -136,6 +136,14 @@
             transform: translateY(-10px);
         }
         
+        .pitched-card {
+            width: var(--card-width);
+            height: var(--card-height);
+            perspective: 1000px;
+            transition: transform 0.2s;
+            margin: 0 auto;
+        }
+        
         .card-inner {
             position: relative;
             width: 100%;
@@ -670,9 +678,18 @@
             renderHand(bowlerHandElement, bowlerHand, 'bowler');
             renderHand(batterHandElement, batterHand, 'batter');
             
-            // Update played cards
-            bowlerPlayedCardElement.innerHTML = bowlerPlayedCard ? createCardHTML(allCards[bowlerPlayedCard], false) : '';
-            batterPlayedCardElement.innerHTML = batterPlayedCard ? createCardHTML(allCards[batterPlayedCard], false) : '';
+            // Update played cards on the pitch
+            if (bowlerPlayedCard) {
+                bowlerPlayedCardElement.innerHTML = `<div class="pitched-card">${createCardHTML(allCards[bowlerPlayedCard], false)}</div>`;
+            } else {
+                bowlerPlayedCardElement.innerHTML = '';
+            }
+            
+            if (batterPlayedCard) {
+                batterPlayedCardElement.innerHTML = `<div class="pitched-card">${createCardHTML(allCards[batterPlayedCard], false)}</div>`;
+            } else {
+                batterPlayedCardElement.innerHTML = '';
+            }
             
             // Update cards remaining
             cardsRemainingElement.textContent = `Cards remaining: ${deck.length}`;
