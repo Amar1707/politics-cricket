@@ -335,7 +335,7 @@
     <div class="container">
         <header>
             <h1>Cricket Card Game - Lok Sabha Elections 2024</h1>
-            <p>A strategic card game based on election candidates</p>
+            <p>A cricket-themed card game based on election candidates</p>
         </header>
 
         <div class="game-info">
@@ -363,10 +363,31 @@
                 </div>
             </div>
             <div class="round-result">
-                <h3>Round Result</h3>
+                <h3>Ball Result</h3>
                 <p id="roundResult">Play cards to see the result</p>
+                <div id="resultInput" class="hidden">
+                    <div style="margin-bottom: 10px;">
+                        <label for="runsScored">Runs scored:</label>
+                        <select id="runsScored">
+                            <option value="0">0</option>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="6">6</option>
+                            <option value="5">5 (Extras)</option>
+                        </select>
+                    </div>
+                    <div style="margin-bottom: 10px;">
+                        <label for="wicketFallen">Wicket fallen?</label>
+                        <input type="checkbox" id="wicketFallen">
+                    </div>
+                    <div class="controls">
+                        <button id="submitResultButton">Submit Result</button>
+                    </div>
+                </div>
                 <div class="controls">
-                    <button id="newRoundButton" disabled>Next Round</button>
+                    <button id="newRoundButton" disabled>Next Ball</button>
                 </div>
             </div>
         </div>
@@ -402,13 +423,15 @@
             deck: [],
             bowlerHand: [],
             batterHand: [],
-            bowlerScore: 0,
             batterScore: 0,
+            wickets: 0,
+            balls: 0,
             currentTurn: 'bowler', // 'bowler' or 'batter'
             roundActive: false,
             bowlerPlayedCard: null,
             batterPlayedCard: null,
-            gameLog: []
+            gameLog: [],
+            waitingForResult: false
         };
 
         // DOM Elements
@@ -417,14 +440,19 @@
         const bowlerPlayedCardEl = document.getElementById('bowlerPlayedCard');
         const batterPlayedCardEl = document.getElementById('batterPlayedCard');
         const versusTextEl = document.getElementById('versusText');
-        const bowlerScoreEl = document.getElementById('bowlerScore');
         const batterScoreEl = document.getElementById('batterScore');
+        const wicketsEl = document.getElementById('wickets');
+        const oversEl = document.getElementById('overs');
         const cardsRemainingEl = document.getElementById('cardsRemaining');
         const roundResultEl = document.getElementById('roundResult');
         const turnIndicatorEl = document.getElementById('turnIndicator');
         const newRoundButtonEl = document.getElementById('newRoundButton');
         const resetButtonEl = document.getElementById('resetButton');
         const gameLogEl = document.getElementById('gameLog');
+        const resultInputEl = document.getElementById('resultInput');
+        const runsScored = document.getElementById('runsScored');
+        const wicketFallen = document.getElementById('wicketFallen');
+        const submitResultButton = document.getElementById('submitResultButton');
 
         // Party colors
         const partyColors = {
@@ -483,6 +511,9 @@
             // Add event listener for reset button
             resetButtonEl.addEventListener('click', resetGame);
             
+            // Add event listener for submit result button
+            submitResultButton.addEventListener('click', processResult);
+            
             // Log game start
             addToGameLog('Game started! Bowler goes first.');
         }
@@ -518,11 +549,24 @@
         // Fetch card data from JSON file
         async function fetchCardData(cardId) {
             try {
-                const response = await fetch(`./cards/${cardId}.json`);
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch card ${cardId}`);
+                // If we haven't loaded the cards data yet, load it
+                if (!window.cardsData) {
+                    const response = await fetch('./cards.json');
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch cards data`);
+                    }
+                    // Store the cards data globally
+                    window.cardsData = await response.json();
                 }
-                return await response.json();
+                
+                // Get the card with the matching ID
+                const card = window.cardsData[cardId];
+                
+                if (!card) {
+                    throw new Error(`Card ${cardId} not found in cards data`);
+                }
+                
+                return card;
             } catch (error) {
                 console.error(error);
                 // Return dummy card data if fetch fails
@@ -558,18 +602,25 @@
             renderHand(gameState.batterHand, batterCardsEl, 'batter');
             
             // Update scores
-            bowlerScoreEl.textContent = gameState.bowlerScore;
             batterScoreEl.textContent = gameState.batterScore;
+            wicketsEl.textContent = gameState.wickets;
+            
+            // Update overs
+            const overs = Math.floor(gameState.balls / 6);
+            const ballsInCurrentOver = gameState.balls % 6;
+            oversEl.textContent = `${overs}.${ballsInCurrentOver}`;
             
             // Update turn indicator
-            if (gameState.roundActive) {
+            if (gameState.waitingForResult) {
+                turnIndicatorEl.textContent = "Enter ball result";
+            } else if (gameState.roundActive) {
                 if (gameState.currentTurn === 'bowler') {
                     turnIndicatorEl.textContent = "Bowler's turn to play";
                 } else {
                     turnIndicatorEl.textContent = "Batter's turn to play";
                 }
             } else {
-                turnIndicatorEl.textContent = "Preparing for next round";
+                turnIndicatorEl.textContent = "Preparing for next ball";
             }
             
             // Show/hide played cards
@@ -589,8 +640,14 @@
                 batterPlayedCardEl.classList.add('hidden');
             }
             
-            // Enable/disable new round button
-            newRoundButtonEl.disabled = gameState.roundActive;
+            // Show/hide result input
+            if (gameState.waitingForResult) {
+                resultInputEl.classList.remove('hidden');
+                newRoundButtonEl.disabled = true;
+            } else {
+                resultInputEl.classList.add('hidden');
+                newRoundButtonEl.disabled = gameState.roundActive;
+            }
         }
 
         // Render a player's hand
@@ -683,66 +740,70 @@
                 gameState.batterPlayedCard = gameState.batterHand[cardIndex];
                 gameState.batterHand.splice(cardIndex, 1);
                 gameState.roundActive = false;
+                gameState.waitingForResult = true;
                 addToGameLog(`Batter played: ${gameState.batterPlayedCard.name} (${gameState.batterPlayedCard.party})`);
                 
-                // Determine the winner of the round
-                determineRoundWinner();
+                // Show result input
+                roundResultEl.textContent = `Enter the result of this ball`;
             }
             
             renderGameState();
         }
 
-        // Determine the winner of the round
-        function determineRoundWinner() {
-            const bowlerCard = gameState.bowlerPlayedCard;
-            const batterCard = gameState.batterPlayedCard;
+        // Process the ball result
+        function processResult() {
+            const runs = parseInt(runsScored.value);
+            const isWicket = wicketFallen.checked;
             
-            let bowlerWins = 0;
-            let batterWins = 0;
-            let roundPoints = 0;
+            // Update the score
+            gameState.batterScore += runs;
             
-            // Compare each stat
-            winningStats.forEach(stat => {
-                if (stat.direction === 'higher') {
-                    if (bowlerCard[stat.name] > batterCard[stat.name]) {
-                        bowlerWins++;
-                    } else if (batterCard[stat.name] > bowlerCard[stat.name]) {
-                        batterWins++;
-                    }
-                } else {
-                    if (bowlerCard[stat.name] < batterCard[stat.name]) {
-                        bowlerWins++;
-                    } else if (batterCard[stat.name] < bowlerCard[stat.name]) {
-                        batterWins++;
-                    }
-                }
-            });
-            
-            // Determine points based on wins
-            if (bowlerWins > batterWins) {
-                roundPoints = bowlerWins - batterWins;
-                gameState.bowlerScore += roundPoints;
-                roundResultEl.textContent = `Bowler wins! +${roundPoints} runs. (${bowlerWins}-${batterWins})`;
-                addToGameLog(`Bowler wins round with ${bowlerWins} stats to ${batterWins}. +${roundPoints} runs.`);
-            } else if (batterWins > bowlerWins) {
-                roundPoints = batterWins - bowlerWins;
-                gameState.batterScore += roundPoints;
-                roundResultEl.textContent = `Batter wins! +${roundPoints} runs. (${batterWins}-${bowlerWins})`;
-                addToGameLog(`Batter wins round with ${batterWins} stats to ${bowlerWins}. +${roundPoints} runs.`);
-            } else {
-                roundResultEl.textContent = `It's a tie! No runs scored. (${bowlerWins}-${batterWins})`;
-                addToGameLog(`Round tied with ${bowlerWins} stats each. No runs scored.`);
+            // Update wickets if applicable
+            if (isWicket) {
+                gameState.wickets++;
             }
+            
+            // Update balls bowled
+            gameState.balls++;
+            
+            // Update game log
+            let resultText = `Ball ${gameState.balls}: `;
+            if (runs === 0 && isWicket) {
+                resultText += "WICKET! No runs scored.";
+            } else if (isWicket) {
+                resultText += `${runs} run${runs !== 1 ? 's' : ''} scored and WICKET!`;
+            } else {
+                resultText += `${runs} run${runs !== 1 ? 's' : ''} scored.`;
+            }
+            
+            addToGameLog(resultText);
+            roundResultEl.textContent = resultText;
+            
+            // Reset for next ball
+            gameState.waitingForResult = false;
             
             // Enable the new round button
             newRoundButtonEl.disabled = false;
+            
+            // Reset input values
+            runsScored.value = "0";
+            wicketFallen.checked = false;
+            
+            renderGameState();
         }
 
-        // Start a new round
+        // Start a new ball
         async function startNewRound() {
             // Clear played cards
             gameState.bowlerPlayedCard = null;
             gameState.batterPlayedCard = null;
+            
+            // Check if the game should end due to all wickets fallen
+            if (gameState.wickets >= 10) {
+                addToGameLog('All out! Game over.');
+                roundResultEl.textContent = 'Game over! All 10 wickets have fallen.';
+                return;
+            }
             
             // Deal a new card to each player
             if (gameState.deck.length >= 2) {
@@ -758,7 +819,7 @@
                     gameState.batterHand.push(batterCardData);
                     
                     updateCardsRemaining();
-                    addToGameLog('New cards dealt. Starting next round.');
+                    addToGameLog('New cards dealt. Starting next ball.');
                 } catch (error) {
                     console.error("Error dealing new cards:", error);
                     addToGameLog('Error dealing new cards. Try resetting the game.');
@@ -770,7 +831,7 @@
                 return;
             }
             
-            // Reset for next round
+            // Reset for next ball
             gameState.currentTurn = 'bowler';
             gameState.roundActive = true;
             roundResultEl.textContent = 'Play cards to see the result';
@@ -786,13 +847,15 @@
                 deck: [],
                 bowlerHand: [],
                 batterHand: [],
-                bowlerScore: 0,
                 batterScore: 0,
+                wickets: 0,
+                balls: 0,
                 currentTurn: 'bowler',
                 roundActive: true,
                 bowlerPlayedCard: null,
                 batterPlayedCard: null,
-                gameLog: []
+                gameLog: [],
+                waitingForResult: false
             };
             
             // Clear UI
@@ -801,8 +864,13 @@
             bowlerPlayedCardEl.classList.add('hidden');
             batterPlayedCardEl.classList.add('hidden');
             versusTextEl.classList.add('hidden');
+            resultInputEl.classList.add('hidden');
             roundResultEl.textContent = 'Play cards to see the result';
             gameLogEl.innerHTML = '';
+            
+            // Reset form values
+            runsScored.value = "0";
+            wicketFallen.checked = false;
             
             // Reinitialize game
             initGame();
