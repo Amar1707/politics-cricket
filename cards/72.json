@@ -1,0 +1,22 @@
+{
+    "id": 72,
+    "name": "AMARSING TISSO",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S03/AMARS-2024-2945.jpg",
+    "age": 56,
+    "gender": "MALE",
+    "party": "BJP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 49.01,
+    "rank": 1,
+    "constituency": "Diphu",
+    "state": "Assam",
+    "constituency_category": "ST",
+    "voters": 682827,
+    "turnout": 75.74,
+    "male_turnout": 75.45,
+    "female_turnout": 76.03,
+    "winner_share": 49.01,
+    "margin": 21.62,
+    "nota_share": 2.38
+}

@@ -1,0 +1,22 @@
+{
+    "id": 98,
+    "name": "ABHAY KUMAR SINHA",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/ABHAY-2024-20240328014724.jpg",
+    "age": 53,
+    "gender": "MALE",
+    "party": "RJD",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 49.22,
+    "rank": 1,
+    "constituency": "Aurangabad",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 945880,
+    "turnout": 50.35,
+    "male_turnout": 51.22,
+    "female_turnout": 49.41,
+    "winner_share": 49.22,
+    "margin": 8.36,
+    "nota_share": 2.39
+}

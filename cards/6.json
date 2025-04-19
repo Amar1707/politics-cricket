@@ -1,0 +1,22 @@
+{
+    "id": 6,
+    "name": "C.M.RAMESH",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/RAMES-2024-7564.jpg",
+    "age": 58,
+    "gender": "MALE",
+    "party": "BJP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 57.5,
+    "rank": 1,
+    "constituency": "Anakapalli",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1325332,
+    "turnout": 82.03,
+    "male_turnout": 81.82,
+    "female_turnout": 82.23,
+    "winner_share": 57.5,
+    "margin": 22.37,
+    "nota_share": 1.98
+}

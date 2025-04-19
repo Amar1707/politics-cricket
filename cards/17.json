@@ -1,0 +1,22 @@
+{
+    "id": 17,
+    "name": "PUTTA MAHESH KUMAR",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/PUTTA-2024-7136.jpg",
+    "age": 39,
+    "gender": "MALE",
+    "party": "TDP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 54.0,
+    "rank": 1,
+    "constituency": "Eluru",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1382049,
+    "turnout": 83.68,
+    "male_turnout": 84.71,
+    "female_turnout": 82.7,
+    "winner_share": 54.0,
+    "margin": 13.16,
+    "nota_share": 1.63
+}

@@ -1,0 +1,22 @@
+{
+    "id": 46,
+    "name": "KINJARAPU RAMMOHAN NAIDU",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/KINJA-2024-20240429074619.jpg",
+    "age": 36,
+    "gender": "MALE",
+    "party": "TDP",
+    "incumbent": 1,
+    "previous_member": 1,
+    "vote_share": 61.05,
+    "rank": 1,
+    "constituency": "Srikakulam",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1235686,
+    "turnout": 74.43,
+    "male_turnout": 72.32,
+    "female_turnout": 76.51,
+    "winner_share": 61.05,
+    "margin": 26.54,
+    "nota_share": 1.99
+}

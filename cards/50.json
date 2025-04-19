@@ -1,0 +1,22 @@
+{
+    "id": 50,
+    "name": "VARA PRASAD RAO VELAGAPALLI",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/VARAP-2024-7111.jpg",
+    "age": 71,
+    "gender": "MALE",
+    "party": "BJP",
+    "incumbent": 0,
+    "previous_member": 1,
+    "vote_share": 44.67,
+    "rank": 2,
+    "constituency": "Tirupati",
+    "state": "Andhra Pradesh",
+    "constituency_category": "SC",
+    "voters": 1382570,
+    "turnout": 79.1,
+    "male_turnout": 79.88,
+    "female_turnout": 78.38,
+    "winner_share": 45.73,
+    "margin": 1.06,
+    "nota_share": 1.17
+}

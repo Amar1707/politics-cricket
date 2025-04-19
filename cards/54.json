@@ -1,0 +1,22 @@
+{
+    "id": 54,
+    "name": "SRIBHARAT MATHUKUMILI",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/SRIBH-2024-6911.jpg",
+    "age": 35,
+    "gender": "MALE",
+    "party": "TDP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 65.42,
+    "rank": 1,
+    "constituency": "Visakhapatnam",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1387125,
+    "turnout": 71.11,
+    "male_turnout": 70.25,
+    "female_turnout": 71.94,
+    "winner_share": 65.42,
+    "margin": 36.35,
+    "nota_share": 0.38
+}

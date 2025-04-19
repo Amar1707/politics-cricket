@@ -1,0 +1,22 @@
+{
+    "id": 73,
+    "name": "JOY RAM ENGLENG",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S03/JOYRA-2024-3319.jpg",
+    "age": 64,
+    "gender": "MALE",
+    "party": "INC",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 18.16,
+    "rank": 3,
+    "constituency": "Diphu",
+    "state": "Assam",
+    "constituency_category": "ST",
+    "voters": 682827,
+    "turnout": 75.74,
+    "male_turnout": 75.45,
+    "female_turnout": 76.03,
+    "winner_share": 49.01,
+    "margin": 21.62,
+    "nota_share": 2.38
+}

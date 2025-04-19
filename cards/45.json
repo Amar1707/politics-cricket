@@ -1,0 +1,22 @@
+{
+    "id": 45,
+    "name": "P V MIDHUN REDDY",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/PVMID-2024-20240418080208.jpg",
+    "age": 48,
+    "gender": "MALE",
+    "party": "YSRCP",
+    "incumbent": 1,
+    "previous_member": 1,
+    "vote_share": 48.38,
+    "rank": 1,
+    "constituency": "Rajampet",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1332939,
+    "turnout": 79.09,
+    "male_turnout": 78.94,
+    "female_turnout": 79.24,
+    "winner_share": 48.38,
+    "margin": 5.71,
+    "nota_share": 0.86
+}

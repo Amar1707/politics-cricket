@@ -1,0 +1,22 @@
+{
+    "id": 41,
+    "name": "MAGUNTA SREENIVASULU REDDY",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/MAGUN-2024-5519.jpg",
+    "age": 70,
+    "gender": "MALE",
+    "party": "TDP",
+    "incumbent": 1,
+    "previous_member": 1,
+    "vote_share": 49.35,
+    "rank": 1,
+    "constituency": "Ongole",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1422214,
+    "turnout": 87.06,
+    "male_turnout": 87.24,
+    "female_turnout": 86.88,
+    "winner_share": 49.35,
+    "margin": 3.53,
+    "nota_share": 0.93
+}

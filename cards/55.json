@@ -1,0 +1,22 @@
+{
+    "id": 55,
+    "name": "APPALANAIDU KALISETTI",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S01/APPAL-2024-6145.jpg",
+    "age": 50,
+    "gender": "MALE",
+    "party": "TDP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 57.2,
+    "rank": 1,
+    "constituency": "Vizianagaram",
+    "state": "Andhra Pradesh",
+    "constituency_category": "GEN",
+    "voters": 1299242,
+    "turnout": 81.05,
+    "male_turnout": 81.03,
+    "female_turnout": 81.08,
+    "winner_share": 57.2,
+    "margin": 19.2,
+    "nota_share": 1.79
+}

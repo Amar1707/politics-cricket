@@ -1,0 +1,22 @@
+{
+    "id": 90,
+    "name": "SURYA KANTA SARKAR",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S03/SURYA-2024-20240405041102.jpg",
+    "age": 51,
+    "gender": "MALE",
+    "party": "INC",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 35.62,
+    "rank": 2,
+    "constituency": "Silchar",
+    "state": "Assam",
+    "constituency_category": "GEN",
+    "voters": 1089426,
+    "turnout": 79.05,
+    "male_turnout": 79.17,
+    "female_turnout": 78.92,
+    "winner_share": 59.89,
+    "margin": 24.27,
+    "nota_share": 1.17
+}

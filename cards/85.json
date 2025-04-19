@@ -1,0 +1,22 @@
+{
+    "id": 85,
+    "name": "UDAY SHANKAR HAZARIKA",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S03/UDAYS-2024-20240330015716.jpg",
+    "age": 65,
+    "gender": "MALE",
+    "party": "INC",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 38.13,
+    "rank": 2,
+    "constituency": "Lakhimpur",
+    "state": "Assam",
+    "constituency_category": "GEN",
+    "voters": 1211214,
+    "turnout": 76.42,
+    "male_turnout": 75.65,
+    "female_turnout": 77.18,
+    "winner_share": 54.75,
+    "margin": 16.62,
+    "nota_share": 1.4
+}
