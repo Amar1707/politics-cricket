@@ -1,0 +1,22 @@
+{
+    "id": 131,
+    "name": "MUJAHID ALAM",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/MUJAH-2024-20240408031508.jpg",
+    "age": 54,
+    "gender": "MALE",
+    "party": "JD(U)",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 29.81,
+    "rank": 2,
+    "constituency": "Kishanganj",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1151099,
+    "turnout": 62.84,
+    "male_turnout": 58.89,
+    "female_turnout": 67.06,
+    "winner_share": 35.0,
+    "margin": 5.19,
+    "nota_share": 2.17
+}

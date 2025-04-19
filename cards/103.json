@@ -1,0 +1,22 @@
+{
+    "id": 103,
+    "name": "ABDHESH KUMAR ROY",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/ABDHE-2024-20240422061408.jpg",
+    "age": 72,
+    "gender": "MALE",
+    "party": "CPI",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 43.86,
+    "rank": 2,
+    "constituency": "Begusarai",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1294673,
+    "turnout": 58.7,
+    "male_turnout": 54.34,
+    "female_turnout": 63.53,
+    "winner_share": 50.15,
+    "margin": 6.29,
+    "nota_share": 1.73
+}

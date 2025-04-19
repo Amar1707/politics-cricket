@@ -1,0 +1,22 @@
+{
+    "id": 168,
+    "name": "AWADH BIHARI CHOUDHARY",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/AWADH-2024-20240430051749.jpg",
+    "age": 77,
+    "gender": "MALE",
+    "party": "RJD",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 19.92,
+    "rank": 3,
+    "constituency": "Siwan",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 998018,
+    "turnout": 52.49,
+    "male_turnout": 47.08,
+    "female_turnout": 58.37,
+    "winner_share": 38.73,
+    "margin": 9.31,
+    "nota_share": 2.7
+}

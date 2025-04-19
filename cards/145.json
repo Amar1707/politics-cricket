@@ -1,0 +1,22 @@
+{
+    "id": 145,
+    "name": "DR. SANDEEP SAURAV",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/SANDE-2024-11853.jpg",
+    "age": 37,
+    "gender": "MALE",
+    "party": "CPI(ML)(L)",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 34.11,
+    "rank": 2,
+    "constituency": "Nalanda",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1144383,
+    "turnout": 49.78,
+    "male_turnout": 49.53,
+    "female_turnout": 50.05,
+    "winner_share": 48.88,
+    "margin": 14.77,
+    "nota_share": 1.68
+}

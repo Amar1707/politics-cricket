@@ -1,0 +1,22 @@
+{
+    "id": 106,
+    "name": "ANIL KUMAR",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/ANILK-2024-13038.jpg",
+    "age": 45,
+    "gender": "MALE",
+    "party": "BSP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 10.68,
+    "rank": 3,
+    "constituency": "Buxar",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1073759,
+    "turnout": 55.39,
+    "male_turnout": 55.85,
+    "female_turnout": 54.89,
+    "winner_share": 40.82,
+    "margin": 2.8,
+    "nota_share": 0.9
+}

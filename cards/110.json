@@ -1,0 +1,22 @@
+{
+    "id": 110,
+    "name": "LALIT KUMAR YADAV",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/LALIT-2024-5956.jpg",
+    "age": 58,
+    "gender": "MALE",
+    "party": "RJD",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 37.93,
+    "rank": 2,
+    "constituency": "Darbhanga",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1024184,
+    "turnout": 57.37,
+    "male_turnout": 52.41,
+    "female_turnout": 62.87,
+    "winner_share": 55.33,
+    "margin": 17.4,
+    "nota_share": 2.33
+}

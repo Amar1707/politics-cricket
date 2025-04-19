@@ -1,0 +1,22 @@
+{
+    "id": 165,
+    "name": "LOVELY ANAND",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/LOVEL-2024-20240504042731.jpg",
+    "age": 57,
+    "gender": "FEMALE",
+    "party": "JD(U)",
+    "incumbent": 0,
+    "previous_member": 1,
+    "vote_share": 45.15,
+    "rank": 1,
+    "constituency": "Sheohar",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1055602,
+    "turnout": 57.4,
+    "male_turnout": 51.79,
+    "female_turnout": 63.68,
+    "winner_share": 45.15,
+    "margin": 2.76,
+    "nota_share": 2.86
+}

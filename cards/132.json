@@ -1,0 +1,22 @@
+{
+    "id": 132,
+    "name": "MOHAMMAD JAWED",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/MOHAM-2024-20240408031810.jpg",
+    "age": 60,
+    "gender": "MALE",
+    "party": "INC",
+    "incumbent": 1,
+    "previous_member": 0,
+    "vote_share": 35.0,
+    "rank": 1,
+    "constituency": "Kishanganj",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1151099,
+    "turnout": 62.84,
+    "male_turnout": 58.89,
+    "female_turnout": 67.06,
+    "winner_share": 35.0,
+    "margin": 5.19,
+    "nota_share": 2.17
+}

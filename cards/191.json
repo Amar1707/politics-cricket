@@ -1,0 +1,22 @@
+{
+    "id": 191,
+    "name": "BHOJRAJ NAG",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S26/BHOJR-2024-20240402082022.jpg",
+    "age": 49,
+    "gender": "MALE",
+    "party": "BJP",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 47.23,
+    "rank": 1,
+    "constituency": "Kanker",
+    "state": "Chhattisgarh",
+    "constituency_category": "ST",
+    "voters": 1265429,
+    "turnout": 76.23,
+    "male_turnout": 76.84,
+    "female_turnout": 75.64,
+    "winner_share": 47.23,
+    "margin": 0.15,
+    "nota_share": 1.48
+}

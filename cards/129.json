@@ -1,0 +1,22 @@
+{
+    "id": 129,
+    "name": "RAJESH VERMA",
+    "photo": "https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S04/RAJES-2024-4741.jpg",
+    "age": 31,
+    "gender": "MALE",
+    "party": "LJP(RV)",
+    "incumbent": 0,
+    "previous_member": 0,
+    "vote_share": 50.73,
+    "rank": 1,
+    "constituency": "Khagaria",
+    "state": "Bihar",
+    "constituency_category": "GEN",
+    "voters": 1061894,
+    "turnout": 57.52,
+    "male_turnout": 52.18,
+    "female_turnout": 63.39,
+    "winner_share": 50.73,
+    "margin": 15.18,
+    "nota_share": 2.93
+}
