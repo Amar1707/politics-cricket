@@ -277,8 +277,8 @@
         }
         
         .player-card {
-            width: 150px;
-            height: 220px;
+            width: 180px;
+            height: 280px;
             background-color: white;
             border-radius: var(--border-radius);
             overflow: hidden;
@@ -321,6 +321,17 @@
             font-size: 0.75rem;
             flex: 1;
             overflow-y: auto;
+        }
+        
+        .mini-card-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+        
+        .mini-info-label {
+            font-weight: bold;
+            color: var(--secondary-color);
         }
         
         .mini-card-info {
@@ -824,7 +835,7 @@
                             <span>${card.party}</span>
                         </div>
                         <div class="mini-card-info">
-                            <span class="mini-info-label">Vote:</span>
+                            <span class="mini-info-label">Vote Share:</span>
                             <span>${card.vote_share}%</span>
                         </div>
                         <div class="mini-card-info">
@@ -832,12 +843,36 @@
                             <span>${card.rank}</span>
                         </div>
                         <div class="mini-card-info">
-                            <span class="mini-info-label">Const:</span>
+                            <span class="mini-info-label">Age:</span>
+                            <span>${card.age}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Gender:</span>
+                            <span>${card.gender}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Type:</span>
+                            <span>${card.type}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Constituency:</span>
                             <span title="${card.constituency}">${card.constituency.length > 12 ? card.constituency.substring(0, 10) + '...' : card.constituency}</span>
                         </div>
                         <div class="mini-card-info">
                             <span class="mini-info-label">State:</span>
                             <span title="${card.state}">${card.state.length > 12 ? card.state.substring(0, 10) + '...' : card.state}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Turnout:</span>
+                            <span>${card.turnout}%</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Margin:</span>
+                            <span>${card.margin}%</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Female Support:</span>
+                            <span>${card.female_support}</span>
                         </div>
                     </div>
                 `;
