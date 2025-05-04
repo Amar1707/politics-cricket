@@ -759,8 +759,12 @@
             // Set action text based on who's batting/bowling
             setActionText();
             
-            // If computer is batting, they will play first
-            if (!userIsBatting && !userIsBowling) {
+            // The bowler always plays first for each ball
+            if (userIsBowling) {
+                // If user is bowling first, wait for user to select a bowling card
+                actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+            } else {
+                // If computer is bowling first, computer plays a bowling card
                 computerPlaysBowlingCard();
             }
             
@@ -1025,7 +1029,7 @@
                 addLogEntry(`<span class="log-highlight">End of over ${Math.floor(balls / BALLS_PER_OVER)}</span>`);
             }
             
-            // Reset cards
+            // Reset cards and prepare for next ball
             setTimeout(() => {
                 bowlerCardPlayed = null;
                 batterCardPlayed = null;
@@ -1038,12 +1042,13 @@
                     // Reset card displays
                     resetCardDisplays();
                     
-                    // Set action text based on who's batting/bowling
-                    setActionText();
-                    
-                    // If computer is to play next, trigger their turn
-                    if ((userIsBatting && !userIsBowling) || (!userIsBatting && userIsBowling)) {
+                    // The bowler always plays first for the next ball
+                    if ((userIsBatting && !userIsBowling) || (!userIsBatting && !userIsBowling)) {
+                        // Computer is bowling
                         computerPlaysBowlingCard();
+                    } else {
+                        // User is bowling
+                        setActionText();
                     }
                 }
             }, 2000);
@@ -1080,9 +1085,11 @@
                         addLogEntry(`<span class="log-highlight">First innings over!</span> You need ${target} runs to win.`);
                     }
                     
-                    // Switch batting/bowling roles
-                    userIsBatting = !userIsBatting;
-                    userIsBowling = !userIsBowling;
+                    // After first innings, switch roles and prepare for second innings
+                    // Reset roles for second innings
+                    const wasUserBatting = userIsBatting;
+                    userIsBatting = !wasUserBatting;
+                    userIsBowling = wasUserBatting;
                     
                     // Update innings indicators
                     if (userIsBatting) {
@@ -1098,6 +1105,15 @@
                     
                     // Update displays
                     updateDisplays();
+                    
+                    // The bowler always starts for the new innings
+                    if (userIsBowling) {
+                        // If user is bowling in second innings, wait for user to select a bowling card
+                        actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+                    } else {
+                        // If computer is bowling in second innings, computer plays a bowling card
+                        computerPlaysBowlingCard();
+                    }
                 } else {
                     // Game is over
                     endGame();
@@ -1261,12 +1277,14 @@
         
         // Set action text based on current game state
         function setActionText() {
-            if (userIsBowling) {
+            if (userIsBowling && !bowlerCardPlayed) {
                 actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
             } else if (userIsBatting && bowlerCardPlayed) {
                 actionTextDisplay.textContent = 'Your turn to bat! Select a card';
             } else if (userIsBatting && !bowlerCardPlayed) {
-                actionTextDisplay.textContent = 'Please wait for the bowler\'s card';
+                actionTextDisplay.textContent = 'Please wait for the computer to bowl';
+            } else if (userIsBowling && bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Please wait for the computer to bat';
             }
         }
         
