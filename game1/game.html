@@ -1158,13 +1158,52 @@
             let runsScored = 0;
             let isWicket = false;
             
+            // First check for wicket
             // Logic: If batter's vote_share < bowler's vote_share, it's a wicket
-            if (batterCardPlayed.vote_share < bowlerCardPlayed.vote_share) {
+            // EXCEPTION: Rank 1 batters can never get out irrespective of vote_share
+            if (batterCardPlayed.vote_share < bowlerCardPlayed.vote_share && batterCardPlayed.rank !== 1) {
                 isWicket = true;
             } else {
-                // Random runs: 0, 1, 2, 3, 4, 6
-                const possibleRuns = [0, 1, 2, 3, 4, 6];
-                runsScored = possibleRuns[Math.floor(Math.random() * possibleRuns.length)];
+                // If no wicket, calculate runs based on the new rules
+                
+                // Special cases first:
+                
+                // 1. If both cards belong to the same party, compute 0 runs
+                if (batterCardPlayed.party === bowlerCardPlayed.party) {
+                    runsScored = 0;
+                }
+                // 2. For FEMALE bowlers, non-FEMALE batters get 0 runs
+                else if (bowlerCardPlayed.gender === "FEMALE" && batterCardPlayed.gender !== "FEMALE") {
+                    runsScored = 0;
+                }
+                // 3. For SC bowlers, non-SC batters get 0 runs
+                else if (bowlerCardPlayed.type === "SC" && batterCardPlayed.type !== "SC") {
+                    runsScored = 0;
+                }
+                // 4. For ST bowlers, non-ST batters get 0 runs
+                else if (bowlerCardPlayed.type === "ST" && batterCardPlayed.type !== "ST") {
+                    runsScored = 0;
+                }
+                // Otherwise, calculate runs based on the vote_share difference
+                else {
+                    // Calculate the difference
+                    const difference = batterCardPlayed.vote_share - bowlerCardPlayed.vote_share;
+                    
+                    // Assign runs based on the difference ranges
+                    if (difference >= 0 && difference < 3) {
+                        runsScored = 0;
+                    } else if (difference >= 3 && difference < 6) {
+                        runsScored = 1;
+                    } else if (difference >= 6 && difference < 9) {
+                        runsScored = 2;
+                    } else if (difference >= 9 && difference < 12) {
+                        runsScored = 3;
+                    } else if (difference >= 12 && difference < 15) {
+                        runsScored = 4;
+                    } else if (difference >= 15) {
+                        runsScored = 6;
+                    }
+                }
             }
             
             // Store the outcome for next ball button
