@@ -914,6 +914,7 @@
                         female_turnout_edge: parseFloat((Math.random() * 5 - 2.5).toFixed(2))
                     });
                 }
+                console.log(`Created ${cards.length} sample cards`);
             }
         }
         
@@ -951,7 +952,7 @@
                 actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
             } else {
                 // If computer is bowling first, computer plays a bowling card
-                computerPlaysBowlingCard();
+                setTimeout(() => computerPlaysBowlingCard(), 500);
             }
             
             // Log game start
@@ -967,17 +968,21 @@
                 const j = Math.floor(Math.random() * (i + 1));
                 [deck[i], deck[j]] = [deck[j], deck[i]];
             }
+            
+            console.log(`Shuffled deck with ${deck.length} cards`);
         }
         
         // Deal cards to players
         function dealCards() {
             playerCards = deck.splice(0, 6);
             computerCards = deck.splice(0, 6);
+            console.log(`Dealt ${playerCards.length} cards to player and ${computerCards.length} cards to computer`);
             renderPlayerCards();
         }
         
         // Render player's cards
         function renderPlayerCards() {
+            console.log(`Rendering ${playerCards.length} player cards, discard mode: ${discardMode}`);
             playerCardsDisplay.innerHTML = '';
             
             playerCards.forEach((card, index) => {
@@ -1042,18 +1047,18 @@
                     </div>
                 `;
                 
-                // Clear any existing event listeners
-                const newCard = cardElement.cloneNode(true);
-                cardElement.replaceWith(newCard);
-                cardElement = newCard;
-                
-                // Add appropriate event listeners based on game state
                 if (discardMode) {
-                    // In discard mode, cards should trigger the discard function
-                    cardElement.addEventListener('click', () => handleCardDiscard(index));
+                    // In discard mode, use a different click handler
+                    cardElement.addEventListener('click', () => {
+                        console.log(`Card ${index} clicked in discard mode`);
+                        handleCardDiscard(index);
+                    });
                 } else if (!waitingForNextBall) {
-                    // In normal mode (not waiting for next ball), cards trigger normal selection
-                    cardElement.addEventListener('click', () => playerSelectsCard(index));
+                    // Normal mode and not waiting for next ball
+                    cardElement.addEventListener('click', () => {
+                        console.log(`Card ${index} clicked in normal mode`);
+                        playerSelectsCard(index);
+                    });
                 }
                 
                 playerCardsDisplay.appendChild(cardElement);
@@ -1120,6 +1125,14 @@
         // Computer plays a bowling card
         function computerPlaysBowlingCard() {
             if (gameOver || waitingForNextBall) return;
+            
+            console.log("Computer playing bowling card");
+            
+            // Check if computer has cards
+            if (computerCards.length === 0) {
+                console.error("Computer has no cards to play!");
+                return;
+            }
             
             // Randomly select a card from computer's hand
             const randomIndex = Math.floor(Math.random() * computerCards.length);
@@ -1822,7 +1835,11 @@
         }
         
         // Initialize the game when page loads
-        window.addEventListener('load', initGame);
+        window.addEventListener('load', async function() {
+            console.log("Window loaded, initializing game...");
+            await initGame();
+            console.log("Game initialization complete, ready to start");
+        });
     </script>
 </body>
 </html>
