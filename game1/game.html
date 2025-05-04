@@ -1,0 +1,1384 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cricket Card Game - Lok Sabha Elections 2024</title>
+    <style>
+        :root {
+            --primary-color: #f47216;
+            --secondary-color: #2b5797;
+            --accent-color: #00a550;
+            --light-bg: #f5f5f5;
+            --dark-bg: #333;
+            --text-color: #333;
+            --light-text: #fff;
+            --card-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            --border-radius: 10px;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: var(--light-bg);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 20px 0;
+            text-align: center;
+            margin-bottom: 30px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+        }
+        
+        header h1 {
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+        
+        .game-options {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            border: none;
+            padding: 12px 24px;
+            font-size: 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+        }
+        
+        button:hover {
+            background-color: #1e3c6b;
+            transform: translateY(-2px);
+        }
+        
+        button:disabled {
+            background-color: #cccccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .reset-btn {
+            background-color: #d9534f;
+        }
+        
+        .reset-btn:hover {
+            background-color: #c9302c;
+        }
+        
+        .game-area {
+            display: flex;
+            flex-direction: column;
+            gap: 30px;
+        }
+        
+        .scoreboard {
+            background-color: var(--secondary-color);
+            color: var(--light-text);
+            padding: 20px;
+            border-radius: var(--border-radius);
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 20px;
+            box-shadow: var(--card-shadow);
+        }
+        
+        .score-section {
+            flex: 1;
+            min-width: 200px;
+            text-align: center;
+        }
+        
+        .scoreboard h2 {
+            margin-bottom: 15px;
+            font-size: 1.5rem;
+        }
+        
+        .score-detail {
+            font-size: 1.2rem;
+            margin: 5px 0;
+        }
+        
+        .current-innings {
+            font-weight: bold;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+        
+        .match-stats {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+        
+        .stat-box {
+            background-color: white;
+            padding: 15px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--card-shadow);
+            text-align: center;
+            min-width: 120px;
+        }
+        
+        .stat-title {
+            font-weight: bold;
+            margin-bottom: 5px;
+            color: var(--secondary-color);
+        }
+        
+        .stat-value {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .board {
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+        }
+        
+        .play-area {
+            display: flex;
+            justify-content: space-around;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+        
+        .card-played {
+            flex: 1;
+            min-width: 300px;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+        
+        .card-title {
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .card {
+            position: relative;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            transition: transform 0.3s ease;
+            height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+        }
+        
+        .card-header {
+            background-color: var(--primary-color);
+            color: var(--light-text);
+            padding: 10px;
+            text-align: center;
+            font-weight: bold;
+        }
+        
+        .player-image {
+            width: 100%;
+            height: 180px;
+            object-fit: cover;
+            border-bottom: 3px solid var(--primary-color);
+        }
+        
+        .card-body {
+            padding: 15px;
+            flex: 1;
+        }
+        
+        .card-info {
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+        }
+        
+        .info-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .info-value {
+            text-align: right;
+        }
+        
+        .party-tag {
+            background-color: var(--secondary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 5px;
+            font-size: 0.9rem;
+        }
+        
+        .action-area {
+            margin-top: 30px;
+        }
+        
+        .card-selection {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .player-cards {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 15px;
+        }
+        
+        .player-card {
+            width: 150px;
+            background-color: white;
+            border-radius: var(--border-radius);
+            overflow: hidden;
+            box-shadow: var(--card-shadow);
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .player-card:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        
+        .mini-card-header {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 5px;
+            text-align: center;
+            font-size: 0.8rem;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .mini-player-image {
+            width: 100%;
+            height: 80px;
+            object-fit: cover;
+        }
+        
+        .mini-card-body {
+            padding: 8px;
+            font-size: 0.8rem;
+        }
+        
+        .mini-card-info {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 3px;
+        }
+        
+        .mini-info-label {
+            font-weight: bold;
+            color: var(--secondary-color);
+        }
+        
+        .game-log {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin-top: 30px;
+            box-shadow: var(--card-shadow);
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .log-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+            text-align: center;
+        }
+        
+        .log-entry {
+            margin-bottom: 8px;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .log-highlight {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .hidden {
+            display: none;
+        }
+        
+        .game-over-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.8);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: var(--border-radius);
+            max-width: 500px;
+            width: 90%;
+            text-align: center;
+        }
+        
+        .modal-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+        }
+        
+        .modal-message {
+            font-size: 1.2rem;
+            margin-bottom: 25px;
+        }
+        
+        .modal-button {
+            background-color: var(--accent-color);
+            padding: 12px 30px;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                height: auto;
+            }
+            
+            .player-card {
+                width: 120px;
+            }
+        }
+
+        .result-highlight {
+            font-size: 1.5rem;
+            color: var(--accent-color);
+            text-align: center;
+            margin: 15px 0;
+            font-weight: bold;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+            100% { transform: scale(1); }
+        }
+
+        .ball-result {
+            font-size: 2rem;
+            font-weight: bold;
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .wicket {
+            color: #d9534f;
+        }
+
+        .runs {
+            color: var(--accent-color);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Cricket Card Game - Lok Sabha Elections 2024</h1>
+            <p>Use election candidate cards to play cricket!</p>
+        </header>
+        
+        <div id="start-screen">
+            <h2 style="text-align: center; margin-bottom: 20px;">Choose Your Strategy</h2>
+            <div class="game-options">
+                <button id="bat-first-btn">Bat First</button>
+                <button id="bowl-first-btn">Bowl First</button>
+            </div>
+        </div>
+        
+        <div id="game-screen" class="hidden">
+            <div class="game-options">
+                <button id="reset-btn" class="reset-btn">Reset Game</button>
+            </div>
+            
+            <div class="game-area">
+                <div class="scoreboard">
+                    <div class="score-section">
+                        <h2>Your Score</h2>
+                        <p class="score-detail">Runs: <span id="user-runs">0</span>/<span id="user-wickets">0</span></p>
+                        <p class="score-detail">Overs: <span id="user-overs">0.0</span></p>
+                        <p id="user-innings-indicator" class="current-innings hidden">Batting Now</p>
+                    </div>
+                    <div class="score-section">
+                        <h2>Target</h2>
+                        <p class="score-detail"><span id="target-runs">-</span></p>
+                    </div>
+                    <div class="score-section">
+                        <h2>Computer Score</h2>
+                        <p class="score-detail">Runs: <span id="comp-runs">0</span>/<span id="comp-wickets">0</span></p>
+                        <p class="score-detail">Overs: <span id="comp-overs">0.0</span></p>
+                        <p id="comp-innings-indicator" class="current-innings hidden">Batting Now</p>
+                    </div>
+                </div>
+                
+                <div class="match-stats">
+                    <div class="stat-box">
+                        <div class="stat-title">Over</div>
+                        <div id="current-over" class="stat-value">0.0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Ball</div>
+                        <div id="ball-count" class="stat-value">0</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Required</div>
+                        <div id="req-runs" class="stat-value">-</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-title">Run Rate</div>
+                        <div id="run-rate" class="stat-value">0.00</div>
+                    </div>
+                </div>
+                
+                <div id="ball-result-display" class="hidden">
+                    <div id="ball-result" class="ball-result">4 RUNS!</div>
+                </div>
+                
+                <div class="board">
+                    <div class="play-area">
+                        <div class="card-played">
+                            <div class="card-title">Bowler's Card</div>
+                            <div id="bowler-card" class="card">
+                                <div class="card-header">Select a card to start</div>
+                                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                                <div class="card-body">
+                                    <div class="card-info">
+                                        <span class="info-label">Party:</span>
+                                        <span class="info-value party-tag">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Age:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Gender:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Vote Share:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Rank:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Constituency:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">State:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Type:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Turnout:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Margin:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Female Support:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card-played">
+                            <div class="card-title">Batter's Card</div>
+                            <div id="batter-card" class="card">
+                                <div class="card-header">Select a card to start</div>
+                                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                                <div class="card-body">
+                                    <div class="card-info">
+                                        <span class="info-label">Party:</span>
+                                        <span class="info-value party-tag">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Age:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Gender:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Vote Share:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Rank:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Constituency:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">State:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Type:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Turnout:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Margin:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                    <div class="card-info">
+                                        <span class="info-label">Female Support:</span>
+                                        <span class="info-value">-</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="result-highlight" id="result-display"></div>
+                    
+                    <div class="action-area">
+                        <div class="card-selection">
+                            <div>
+                                <h3 id="action-text" style="text-align: center; margin-bottom: 15px;">Please wait for the bowler's card</h3>
+                                <div class="player-cards" id="player-cards"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="game-log">
+                    <div class="log-title">Match Commentary</div>
+                    <div id="log-entries"></div>
+                </div>
+            </div>
+        </div>
+        
+        <div id="game-over-modal" class="game-over-modal">
+            <div class="modal-content">
+                <h2 class="modal-title">Game Over!</h2>
+                <p id="modal-message" class="modal-message">The match has ended.</p>
+                <button id="play-again-btn" class="modal-button">Play Again</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Game state variables
+        let cards = [];
+        let deck = [];
+        let playerCards = [];
+        let computerCards = [];
+        let userIsBatting = false;
+        let userIsBowling = false;
+        let currentInnings = 1;
+        let userRuns = 0;
+        let userWickets = 0;
+        let compRuns = 0;
+        let compWickets = 0;
+        let balls = 0;
+        let target = null;
+        let bowlerCardPlayed = null;
+        let batterCardPlayed = null;
+        let gameOver = false;
+        
+        // Constants
+        const TOTAL_OVERS = 6;
+        const TOTAL_WICKETS = 6;
+        const BALLS_PER_OVER = 6;
+        
+        // DOM elements
+        const startScreen = document.getElementById('start-screen');
+        const gameScreen = document.getElementById('game-screen');
+        const batFirstBtn = document.getElementById('bat-first-btn');
+        const bowlFirstBtn = document.getElementById('bowl-first-btn');
+        const resetBtn = document.getElementById('reset-btn');
+        const userRunsDisplay = document.getElementById('user-runs');
+        const userWicketsDisplay = document.getElementById('user-wickets');
+        const userOversDisplay = document.getElementById('user-overs');
+        const compRunsDisplay = document.getElementById('comp-runs');
+        const compWicketsDisplay = document.getElementById('comp-wickets');
+        const compOversDisplay = document.getElementById('comp-overs');
+        const targetRunsDisplay = document.getElementById('target-runs');
+        const reqRunsDisplay = document.getElementById('req-runs');
+        const currentOverDisplay = document.getElementById('current-over');
+        const ballCountDisplay = document.getElementById('ball-count');
+        const runRateDisplay = document.getElementById('run-rate');
+        const bowlerCardDisplay = document.getElementById('bowler-card');
+        const batterCardDisplay = document.getElementById('batter-card');
+        const playerCardsDisplay = document.getElementById('player-cards');
+        const actionTextDisplay = document.getElementById('action-text');
+        const logEntriesDisplay = document.getElementById('log-entries');
+        const userInningsIndicator = document.getElementById('user-innings-indicator');
+        const compInningsIndicator = document.getElementById('comp-innings-indicator');
+        const gameOverModal = document.getElementById('game-over-modal');
+        const modalMessage = document.getElementById('modal-message');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const resultDisplay = document.getElementById('result-display');
+        const ballResultDisplay = document.getElementById('ball-result-display');
+        const ballResult = document.getElementById('ball-result');
+        
+        // Event listeners
+        batFirstBtn.addEventListener('click', () => startGame(true));
+        bowlFirstBtn.addEventListener('click', () => startGame(false));
+        resetBtn.addEventListener('click', resetGame);
+        playAgainBtn.addEventListener('click', resetGame);
+        
+        // Initialize the game
+        async function initGame() {
+            try {
+                // Load cards from cards.json
+                const response = await fetch('cards.json');
+                const cardsData = await response.json();
+                cards = Object.values(cardsData);
+                console.log(`Loaded ${cards.length} cards`);
+            } catch (error) {
+                console.error('Error loading cards:', error);
+                
+                // For testing/demo purposes, create some sample cards
+                cards = [];
+                for (let i = 1; i <= 100; i++) {
+                    cards.push({
+                        id: i,
+                        name: `Candidate ${i}`,
+                        photo: `/api/placeholder/400/180?text=Candidate${i}`,
+                        age: Math.floor(Math.random() * 40) + 30,
+                        gender: Math.random() > 0.5 ? 'MALE' : 'FEMALE',
+                        party: ['BJP', 'INC', 'AAP', 'YSRCP', 'DMK', 'TMC'][Math.floor(Math.random() * 6)],
+                        vote_share: Math.floor(Math.random() * 50) + 20,
+                        rank: Math.floor(Math.random() * 3) + 1,
+                        constituency: `Constituency ${i}`,
+                        state: ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Uttar Pradesh', 'West Bengal'][Math.floor(Math.random() * 5)],
+                        type: ['GEN', 'SC', 'ST', 'OBC'][Math.floor(Math.random() * 4)],
+                        turnout: Math.floor(Math.random() * 30) + 60,
+                        margin: Math.floor(Math.random() * 25) + 1,
+                        female_support: (Math.random() * 5) - 2.5
+                    });
+                }
+            }
+        }
+        
+        // Start the game
+        function startGame(userBatsFirst) {
+            startScreen.classList.add('hidden');
+            gameScreen.classList.remove('hidden');
+            
+            // Set game mode
+            userIsBatting = userBatsFirst;
+            userIsBowling = !userBatsFirst;
+            
+            // Show current innings indicator
+            if (userIsBatting) {
+                userInningsIndicator.classList.remove('hidden');
+                compInningsIndicator.classList.add('hidden');
+            } else {
+                userInningsIndicator.classList.add('hidden');
+                compInningsIndicator.classList.remove('hidden');
+            }
+            
+            // Shuffle deck and deal cards
+            shuffleDeck();
+            dealCards();
+            
+            // Set initial game state
+            updateDisplays();
+            
+            // Set action text based on who's batting/bowling
+            setActionText();
+            
+            // If computer is batting, they will play first
+            if (!userIsBatting && !userIsBowling) {
+                computerPlaysBowlingCard();
+            }
+            
+            // Log game start
+            addLogEntry(`<span class="log-highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
+        }
+        
+        // Shuffle the deck of cards
+        function shuffleDeck() {
+            deck = [...cards];
+            
+            // Fisher-Yates shuffle algorithm
+            for (let i = deck.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [deck[i], deck[j]] = [deck[j], deck[i]];
+            }
+        }
+        
+        // Deal cards to players
+        function dealCards() {
+            playerCards = deck.splice(0, 6);
+            computerCards = deck.splice(0, 6);
+            renderPlayerCards();
+        }
+        
+        // Render player's cards
+        function renderPlayerCards() {
+            playerCardsDisplay.innerHTML = '';
+            
+            playerCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'player-card';
+                cardElement.dataset.index = index;
+                
+                cardElement.innerHTML = `
+                    <div class="mini-card-header">${card.name}</div>
+                    <img src="${card.photo}" alt="${card.name}" class="mini-player-image">
+                    <div class="mini-card-body">
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Party:</span>
+                            <span>${card.party}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Vote:</span>
+                            <span>${card.vote_share}%</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Rank:</span>
+                            <span>${card.rank}</span>
+                        </div>
+                    </div>
+                `;
+                
+                cardElement.addEventListener('click', () => playerSelectsCard(index));
+                playerCardsDisplay.appendChild(cardElement);
+            });
+        }
+        
+        // Player selects a card
+        function playerSelectsCard(index) {
+            if (gameOver) return;
+            
+            // If player is bowling and bowler card not played yet
+            if (userIsBowling && !bowlerCardPlayed) {
+                bowlerCardPlayed = playerCards[index];
+                displayCard(bowlerCardPlayed, bowlerCardDisplay);
+                
+                // Remove the card from player's hand
+                playerCards.splice(index, 1);
+                
+                // Draw a new card
+                if (deck.length > 0) {
+                    playerCards.push(deck.shift());
+                }
+                
+                // Re-render player cards
+                renderPlayerCards();
+                
+                // Computer plays batting card
+                computerPlaysBattingCard();
+                
+                // Log
+                addLogEntry(`You bowled with <span class="log-highlight">${bowlerCardPlayed.name}</span> (${bowlerCardPlayed.vote_share}% vote share).`);
+            }
+            
+            // If player is batting and bowler card already played
+            else if (userIsBatting && bowlerCardPlayed) {
+                batterCardPlayed = playerCards[index];
+                displayCard(batterCardPlayed, batterCardDisplay);
+                
+                // Remove the card from player's hand
+                playerCards.splice(index, 1);
+                
+                // Draw a new card
+                if (deck.length > 0) {
+                    playerCards.push(deck.shift());
+                }
+                
+                // Re-render player cards
+                renderPlayerCards();
+                
+                // Process the ball
+                processBall();
+                
+                // Log
+                addLogEntry(`You batted with <span class="log-highlight">${batterCardPlayed.name}</span> (${batterCardPlayed.vote_share}% vote share).`);
+            }
+        }
+        
+        // Computer plays a bowling card
+        function computerPlaysBowlingCard() {
+            if (gameOver) return;
+            
+            // Randomly select a card from computer's hand
+            const randomIndex = Math.floor(Math.random() * computerCards.length);
+            bowlerCardPlayed = computerCards[randomIndex];
+            
+            // Display the card
+            displayCard(bowlerCardPlayed, bowlerCardDisplay);
+            
+            // Remove the card from computer's hand
+            computerCards.splice(randomIndex, 1);
+            
+            // Draw a new card
+            if (deck.length > 0) {
+                computerCards.push(deck.shift());
+            }
+            
+            // Update action text
+            actionTextDisplay.textContent = "Your turn to bat! Select a card";
+            
+            // Log
+            addLogEntry(`Computer bowled with <span class="log-highlight">${bowlerCardPlayed.name}</span> (${bowlerCardPlayed.vote_share}% vote share).`);
+        }
+        
+        // Computer plays a batting card
+        function computerPlaysBattingCard() {
+            if (gameOver) return;
+            
+            // Randomly select a card from computer's hand
+            const randomIndex = Math.floor(Math.random() * computerCards.length);
+            batterCardPlayed = computerCards[randomIndex];
+            
+            // Display the card
+            displayCard(batterCardPlayed, batterCardDisplay);
+            
+            // Remove the card from computer's hand
+            computerCards.splice(randomIndex, 1);
+            
+            // Draw a new card
+            if (deck.length > 0) {
+                computerCards.push(deck.shift());
+            }
+            
+            // Process the ball
+            processBall();
+            
+            // Log
+            addLogEntry(`Computer batted with <span class="log-highlight">${batterCardPlayed.name}</span> (${batterCardPlayed.vote_share}% vote share).`);
+        }
+        
+        // Display a card in the card display area
+        function displayCard(card, displayElement) {
+            displayElement.innerHTML = `
+                <div class="card-header">${card.name}</div>
+                <img src="${card.photo}" alt="${card.name}" class="player-image">
+                <div class="card-body">
+                    <div class="card-info">
+                        <span class="info-label">Party:</span>
+                        <span class="info-value party-tag">${card.party}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">${card.age}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">${card.gender}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">${card.vote_share}%</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">${card.rank}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">${card.constituency}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">${card.state}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">${card.type}</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">${card.turnout}%</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">${card.margin}%</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Female Support:</span>
+                        <span class="info-value">${card.female_support}</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Process the ball (determine outcome)
+        function processBall() {
+            balls++;
+            let runsScored = 0;
+            let isWicket = false;
+            
+            // Logic: If batter's vote_share < bowler's vote_share, it's a wicket
+            if (batterCardPlayed.vote_share < bowlerCardPlayed.vote_share) {
+                isWicket = true;
+            } else {
+                // Random runs: 0, 1, 2, 3, 4, 6
+                const possibleRuns = [0, 1, 2, 3, 4, 6];
+                runsScored = possibleRuns[Math.floor(Math.random() * possibleRuns.length)];
+            }
+            
+            // Update scores
+            if (userIsBatting) {
+                if (isWicket) {
+                    userWickets++;
+                    showBallResult("WICKET!", true);
+                } else {
+                    userRuns += runsScored;
+                    showBallResult(`${runsScored} RUN${runsScored !== 1 ? 'S' : ''}!`, false);
+                }
+            } else {
+                if (isWicket) {
+                    compWickets++;
+                    showBallResult("WICKET!", true);
+                } else {
+                    compRuns += runsScored;
+                    showBallResult(`${runsScored} RUN${runsScored !== 1 ? 'S' : ''}!`, false);
+                }
+            }
+            
+            // Log the result
+            if (isWicket) {
+                addLogEntry(`<span class="log-highlight">WICKET!</span> ${userIsBatting ? 'You' : 'Computer'} lost a wicket.`);
+            } else {
+                addLogEntry(`<span class="log-highlight">${runsScored} run${runsScored !== 1 ? 's' : ''}</span> scored by ${userIsBatting ? 'you' : 'computer'}.`);
+            }
+            
+            // Update displays
+            updateDisplays();
+            
+            // Check if over is complete
+            if (balls % BALLS_PER_OVER === 0) {
+                addLogEntry(`<span class="log-highlight">End of over ${Math.floor(balls / BALLS_PER_OVER)}</span>`);
+            }
+            
+            // Reset cards
+            setTimeout(() => {
+                bowlerCardPlayed = null;
+                batterCardPlayed = null;
+                
+                // Check if innings/game is over
+                checkInningsStatus();
+                
+                // If game is not over, continue play
+                if (!gameOver) {
+                    // Reset card displays
+                    resetCardDisplays();
+                    
+                    // Set action text based on who's batting/bowling
+                    setActionText();
+                    
+                    // If computer is to play next, trigger their turn
+                    if ((userIsBatting && !userIsBowling) || (!userIsBatting && userIsBowling)) {
+                        computerPlaysBowlingCard();
+                    }
+                }
+            }, 2000);
+        }
+        
+        // Show ball result animation
+        function showBallResult(text, isWicket) {
+            ballResult.textContent = text;
+            ballResult.className = `ball-result ${isWicket ? 'wicket' : 'runs'}`;
+            ballResultDisplay.classList.remove('hidden');
+            
+            setTimeout(() => {
+                ballResultDisplay.classList.add('hidden');
+            }, 1500);
+        }
+        
+        // Check if innings or game is over
+        function checkInningsStatus() {
+            const oversCompleted = Math.floor(balls / BALLS_PER_OVER);
+            const currentWickets = userIsBatting ? userWickets : compWickets;
+            
+            // Check if innings is over
+            if (oversCompleted >= TOTAL_OVERS || currentWickets >= TOTAL_WICKETS) {
+                // If first innings is over
+                if (currentInnings === 1) {
+                    currentInnings = 2;
+                    
+                    // Set target for second innings
+                    if (userIsBatting) {
+                        target = userRuns + 1;
+                        addLogEntry(`<span class="log-highlight">First innings over!</span> Computer needs ${target} runs to win.`);
+                    } else {
+                        target = compRuns + 1;
+                        addLogEntry(`<span class="log-highlight">First innings over!</span> You need ${target} runs to win.`);
+                    }
+                    
+                    // Switch batting/bowling roles
+                    userIsBatting = !userIsBatting;
+                    userIsBowling = !userIsBowling;
+                    
+                    // Update innings indicators
+                    if (userIsBatting) {
+                        userInningsIndicator.classList.remove('hidden');
+                        compInningsIndicator.classList.add('hidden');
+                    } else {
+                        userInningsIndicator.classList.add('hidden');
+                        compInningsIndicator.classList.remove('hidden');
+                    }
+                    
+                    // Reset balls count for new innings
+                    balls = 0;
+                    
+                    // Update displays
+                    updateDisplays();
+                } else {
+                    // Game is over
+                    endGame();
+                }
+            }
+            
+            // Check if target has been achieved in second innings
+            if (currentInnings === 2) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                
+                if (currentRuns >= target) {
+                    endGame();
+                }
+            }
+        }
+        
+        // End the game
+        function endGame() {
+            gameOver = true;
+            
+            // Determine the winner
+            let winner = '';
+            let winMessage = '';
+            
+            if (currentInnings === 2) {
+                const userBattedSecond = userIsBatting;
+                const compBattedSecond = !userIsBatting;
+                
+                if ((userBattedSecond && userRuns >= target) || (compBattedSecond && compRuns < target)) {
+                    winner = 'You';
+                    winMessage = `You won by ${TOTAL_WICKETS - userWickets} wickets!`;
+                } else if ((compBattedSecond && compRuns >= target) || (userBattedSecond && userRuns < target)) {
+                    winner = 'Computer';
+                    winMessage = `Computer won by ${TOTAL_WICKETS - compWickets} wickets!`;
+                } else {
+                    // This shouldn't happen with the current logic, but just in case
+                    winner = 'Nobody';
+                    winMessage = 'The game ended in a tie!';
+                }
+            } else {
+                // If game ended after first innings (shouldn't happen with current logic)
+                winner = userRuns > compRuns ? 'You' : 'Computer';
+                winMessage = `${winner} won the game!`;
+            }
+            
+            // Show winner in result display
+            resultDisplay.textContent = `${winner} won the match!`;
+            
+            // Show modal with game result
+            modalMessage.textContent = winMessage;
+            gameOverModal.style.display = 'flex';
+            
+            // Log the result
+            addLogEntry(`<span class="log-highlight">GAME OVER!</span> ${winMessage}`);
+        }
+        
+        // Reset card displays
+        function resetCardDisplays() {
+            bowlerCardDisplay.innerHTML = `
+                <div class="card-header">Select a card to start</div>
+                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                <div class="card-body">
+                    <div class="card-info">
+                        <span class="info-label">Party:</span>
+                        <span class="info-value party-tag">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Female Support:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                </div>
+            `;
+            
+            batterCardDisplay.innerHTML = `
+                <div class="card-header">Select a card to start</div>
+                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                <div class="card-body">
+                    <div class="card-info">
+                        <span class="info-label">Party:</span>
+                        <span class="info-value party-tag">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Female Support:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Set action text based on current game state
+        function setActionText() {
+            if (userIsBowling) {
+                actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+            } else if (userIsBatting && bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Your turn to bat! Select a card';
+            } else if (userIsBatting && !bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Please wait for the bowler\'s card';
+            }
+        }
+        
+        // Add an entry to the game log
+        function addLogEntry(text) {
+            const entryElement = document.createElement('div');
+            entryElement.className = 'log-entry';
+            entryElement.innerHTML = text;
+            
+            logEntriesDisplay.prepend(entryElement);
+        }
+        
+        // Update all displays with current game state
+        function updateDisplays() {
+            userRunsDisplay.textContent = userRuns;
+            userWicketsDisplay.textContent = userWickets;
+            compRunsDisplay.textContent = compRuns;
+            compWicketsDisplay.textContent = compWickets;
+            
+            // Calculate overs (e.g. 2.3 means 2 overs and 3 balls)
+            const totalBalls = balls;
+            const currentOver = Math.floor(totalBalls / BALLS_PER_OVER);
+            const ballsInCurrentOver = totalBalls % BALLS_PER_OVER;
+            
+            const oversDisplay = `${currentOver}.${ballsInCurrentOver}`;
+            
+            // Update overs display based on innings
+            if (userIsBatting) {
+                userOversDisplay.textContent = oversDisplay;
+            } else {
+                compOversDisplay.textContent = oversDisplay;
+            }
+            
+            // Update current over and ball display
+            currentOverDisplay.textContent = oversDisplay;
+            ballCountDisplay.textContent = totalBalls;
+            
+            // Update target and required runs if available
+            if (target) {
+                targetRunsDisplay.textContent = target;
+                
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const requiredRuns = Math.max(0, target - currentRuns);
+                
+                reqRunsDisplay.textContent = requiredRuns;
+                
+                // If game is in second innings, add info about required runs
+                if (currentInnings === 2) {
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    const remainingWickets = TOTAL_WICKETS - (userIsBatting ? userWickets : compWickets);
+                    
+                    if (requiredRuns > 0) {
+                        resultDisplay.textContent = `${userIsBatting ? 'You need' : 'Computer needs'} ${requiredRuns} runs from ${remainingBalls} balls with ${remainingWickets} wickets remaining`;
+                    } else {
+                        resultDisplay.textContent = '';
+                    }
+                } else {
+                    resultDisplay.textContent = '';
+                }
+            } else {
+                targetRunsDisplay.textContent = '-';
+                reqRunsDisplay.textContent = '-';
+                resultDisplay.textContent = '';
+            }
+            
+            // Calculate and update run rate
+            if (totalBalls > 0) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const runRate = (currentRuns / totalBalls) * 6;
+                runRateDisplay.textContent = runRate.toFixed(2);
+            } else {
+                runRateDisplay.textContent = '0.00';
+            }
+        }
+        
+        // Reset the game to initial state
+        function resetGame() {
+            // Reset game state variables
+            userIsBatting = false;
+            userIsBowling = false;
+            currentInnings = 1;
+            userRuns = 0;
+            userWickets = 0;
+            compRuns = 0;
+            compWickets = 0;
+            balls = 0;
+            target = null;
+            bowlerCardPlayed = null;
+            batterCardPlayed = null;
+            gameOver = false;
+            
+            // Reset displays
+            resetCardDisplays();
+            resultDisplay.textContent = '';
+            
+            // Clear log
+            logEntriesDisplay.innerHTML = '';
+            
+            // Hide game screen and modal
+            gameScreen.classList.add('hidden');
+            gameOverModal.style.display = 'none';
+            
+            // Show start screen
+            startScreen.classList.remove('hidden');
+            
+            // Reset innings indicators
+            userInningsIndicator.classList.add('hidden');
+            compInningsIndicator.classList.add('hidden');
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
