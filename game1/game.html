@@ -1042,8 +1042,17 @@
                     </div>
                 `;
                 
-                // Only enable card selection if not waiting for next ball or in discard mode
-                if (!waitingForNextBall || discardMode) {
+                // Clear any existing event listeners
+                const newCard = cardElement.cloneNode(true);
+                cardElement.replaceWith(newCard);
+                cardElement = newCard;
+                
+                // Add appropriate event listeners based on game state
+                if (discardMode) {
+                    // In discard mode, cards should trigger the discard function
+                    cardElement.addEventListener('click', () => handleCardDiscard(index));
+                } else if (!waitingForNextBall) {
+                    // In normal mode (not waiting for next ball), cards trigger normal selection
                     cardElement.addEventListener('click', () => playerSelectsCard(index));
                 }
                 
