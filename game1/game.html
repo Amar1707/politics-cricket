@@ -294,6 +294,41 @@
             box-shadow: 0 8px 16px rgba(0,0,0,0.2);
         }
         
+        /* Discard mode styles */
+        .discard-mode {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .discard-mode:hover {
+            transform: translateY(-5px) scale(1.05);
+            box-shadow: 0 8px 16px rgba(255,0,0,0.3);
+            opacity: 0.9;
+        }
+        
+        .discard-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(220, 53, 69, 0.7);
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: bold;
+            font-size: 1.2rem;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+            z-index: 10;
+        }
+        
+        .discard-mode:hover .discard-overlay {
+            opacity: 1;
+        }
+        
         .mini-card-header {
             background-color: var(--primary-color);
             color: white;
@@ -715,6 +750,14 @@
                         <button id="next-ball-btn" class="next-ball-btn">Next Ball</button>
                     </div>
                     
+                    <!-- New discard area for end of over -->
+                    <div id="discard-area" class="outcome-area hidden">
+                        <div class="outcome-title">End of Over</div>
+                        <div id="discard-instructions" class="outcome-message">You can discard and draw up to 2 cards.</div>
+                        <div id="discard-counter" class="ball-result">0/2 discards used</div>
+                        <button id="finish-discard-btn" class="next-ball-btn">Finish</button>
+                    </div>
+                    
                     <div class="result-highlight" id="result-display"></div>
                     
                     <div class="action-area">
@@ -783,6 +826,8 @@
         let lastBallRuns = 0;
         let lastBallWicket = false;
         let waitingForNextBall = false;
+        let discardMode = false;
+        let discardCount = 0;
         
         // Constants
         const TOTAL_OVERS = 6;
@@ -825,6 +870,10 @@
         const finalUserScore = document.getElementById('final-user-score');
         const finalCompScore = document.getElementById('final-comp-score');
         const finalResult = document.getElementById('final-result');
+        const discardArea = document.getElementById('discard-area');
+        const discardInstructionsText = document.getElementById('discard-instructions');
+        const discardCounterText = document.getElementById('discard-counter');
+        const finishDiscardBtn = document.getElementById('finish-discard-btn');
         
         // Event listeners
         batFirstBtn.addEventListener('click', () => startGame(true));
@@ -832,6 +881,7 @@
         resetBtn.addEventListener('click', resetGame);
         playAgainBtn.addEventListener('click', resetGame);
         nextBallBtn.addEventListener('click', prepareNextBall);
+        finishDiscardBtn.addEventListener('click', finishDiscardPhase);
         
         // Initialize the game
         async function initGame() {
@@ -935,7 +985,13 @@
                 cardElement.className = 'player-card';
                 cardElement.dataset.index = index;
                 
+                // Add a discard mode style if in discard mode
+                if (discardMode) {
+                    cardElement.classList.add('discard-mode');
+                }
+                
                 cardElement.innerHTML = `
+                    ${discardMode ? '<div class="discard-overlay">DISCARD</div>' : ''}
                     <div class="mini-card-header">${card.name}</div>
                     <img src="${card.photo}" alt="${card.name}" class="mini-player-image">
                     <div class="mini-card-body">
@@ -986,8 +1042,8 @@
                     </div>
                 `;
                 
-                // Only enable card selection if not waiting for next ball
-                if (!waitingForNextBall) {
+                // Only enable card selection if not waiting for next ball or in discard mode
+                if (!waitingForNextBall || discardMode) {
                     cardElement.addEventListener('click', () => playerSelectsCard(index));
                 }
                 
@@ -998,6 +1054,12 @@
         // Player selects a card
         function playerSelectsCard(index) {
             if (gameOver || waitingForNextBall) return;
+            
+            // If in discard mode, handle discarding
+            if (discardMode) {
+                handleCardDiscard(index);
+                return;
+            }
             
             // If player is bowling and bowler card not played yet
             if (userIsBowling && !bowlerCardPlayed) {
@@ -1246,20 +1308,102 @@
             
             // Check if over is complete
             if (balls % BALLS_PER_OVER === 0) {
-                addLogEntry(`<span class="log-highlight">End of over ${Math.floor(balls / BALLS_PER_OVER)}</span>`);
+                const currentOver = Math.floor(balls / BALLS_PER_OVER);
+                const isLastOver = currentOver >= TOTAL_OVERS;
+                
+                addLogEntry(`<span class="log-highlight">End of over ${currentOver}</span>`);
+                
+                // If it's not the last over, allow bowler to discard and draw cards
+                if (!isLastOver) {
+                    if (userIsBowling) {
+                        // If user is bowling, show the discard interface after they click next ball
+                        nextBallBtn.textContent = "Manage Your Cards";
+                        nextBallBtn.onclick = showDiscardInterface;
+                    } else {
+                        // If computer is bowling, automatically have computer discard and draw
+                        // This will be handled in prepareNextBall for the computer
+                    }
+                }
             }
             
             // Check if innings/game is over (but don't proceed automatically)
             checkInningsStatus();
         }
         
-        // Prepare for the next ball
-        function prepareNextBall() {
-            if (gameOver) return;
-            
+        // Show discard interface for user
+        function showDiscardInterface() {
             // Hide outcome area
             outcomeArea.classList.add('hidden');
             
+            // Show discard interface
+            discardArea.classList.remove('hidden');
+            
+            // Set instructions
+            discardInstructionsText.textContent = "You can discard and draw up to 2 cards. Select cards to discard.";
+            
+            // Reset discard count
+            discardCount = 0;
+            updateDiscardCounter();
+            
+            // Enable discard mode
+            discardMode = true;
+            
+            // Render player cards in discard mode
+            renderPlayerCards();
+        }
+        
+        // Handle card discard for user
+        function handleCardDiscard(index) {
+            if (discardCount >= 2) return;
+            
+            // Remove the card from player's hand
+            const discardedCard = playerCards.splice(index, 1)[0];
+            
+            // Draw a new card if available
+            if (deck.length > 0) {
+                playerCards.push(deck.shift());
+            }
+            
+            // Increment discard count
+            discardCount++;
+            updateDiscardCounter();
+            
+            // Log the discard
+            addLogEntry(`You discarded <span class="log-highlight">${discardedCard.name}</span> and drew a new card.`);
+            
+            // Render updated player cards
+            renderPlayerCards();
+            
+            // Check if all discards are used
+            if (discardCount >= 2) {
+                // Automatically finish discard phase after a short delay
+                setTimeout(finishDiscardPhase, 1000);
+            }
+        }
+        
+        // Update discard counter display
+        function updateDiscardCounter() {
+            discardCounterText.textContent = `${discardCount}/2 discards used`;
+        }
+        
+        // Finish discard phase
+        function finishDiscardPhase() {
+            // Reset discard mode
+            discardMode = false;
+            
+            // Hide discard interface
+            discardArea.classList.add('hidden');
+            
+            // Reset next ball button
+            nextBallBtn.textContent = "Next Ball";
+            nextBallBtn.onclick = prepareNextBall;
+            
+            // Complete preparation for next ball
+            completePrepareNextBall();
+        }
+        
+        // Complete preparation for next ball (after discards if applicable)
+        function completePrepareNextBall() {
             // Reset cards for next ball
             bowlerCardPlayed = null;
             batterCardPlayed = null;
@@ -1281,6 +1425,59 @@
             
             // Update player cards to make them clickable again
             renderPlayerCards();
+        }
+        
+        // Computer discard cards
+        function computerDiscardCards() {
+            // Computer discards up to 2 cards with lowest vote_share
+            let discardsUsed = 0;
+            
+            while (discardsUsed < 2 && computerCards.length > 0 && deck.length > 0) {
+                // Find the index of the card with lowest vote_share
+                let lowestIndex = 0;
+                for (let i = 1; i < computerCards.length; i++) {
+                    if (computerCards[i].vote_share < computerCards[lowestIndex].vote_share) {
+                        lowestIndex = i;
+                    }
+                }
+                
+                // Discard that card
+                const discardedCard = computerCards.splice(lowestIndex, 1)[0];
+                
+                // Draw a new card
+                computerCards.push(deck.shift());
+                
+                // Log the discard
+                addLogEntry(`Computer discarded a card and drew a new card.`);
+                
+                discardsUsed++;
+            }
+        }
+        
+        // Prepare for the next ball
+        function prepareNextBall() {
+            if (gameOver) return;
+            
+            // Check if we just completed an over (except the last one)
+            const currentOver = Math.floor((balls - 1) / BALLS_PER_OVER) + 1; // +1 because we need the over we just completed
+            const ballInOver = ((balls - 1) % BALLS_PER_OVER) + 1; // +1 to get 1-based ball number
+            
+            // If we just completed a full over and it's not the last over
+            if (ballInOver === BALLS_PER_OVER && currentOver < TOTAL_OVERS) {
+                if (!userIsBowling) {
+                    // If computer is bowling, perform computer's discards
+                    computerDiscardCards();
+                    completePrepareNextBall();
+                } else {
+                    // User bowling - handled in the showDiscardInterface function
+                    showDiscardInterface();
+                }
+            } else {
+                // Not an over boundary, just prepare the next ball normally
+                // Hide outcome area
+                outcomeArea.classList.add('hidden');
+                completePrepareNextBall();
+            }
         }
         
         // Check if innings or game is over
@@ -1589,12 +1786,16 @@
             batterCardPlayed = null;
             gameOver = false;
             waitingForNextBall = false;
+            discardMode = false;
+            discardCount = 0;
             
             // Reset displays
             resetCardDisplays();
             resultDisplay.textContent = '';
             outcomeArea.classList.add('hidden');
+            discardArea.classList.add('hidden');
             nextBallBtn.textContent = "Next Ball";
+            nextBallBtn.onclick = prepareNextBall;
             
             // Clear log
             logEntriesDisplay.innerHTML = '';
