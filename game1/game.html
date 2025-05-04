@@ -1361,7 +1361,7 @@
             discardArea.classList.remove('hidden');
             
             // Set instructions
-            discardInstructionsText.textContent = "You can discard and draw up to 2 cards. Select cards to discard.";
+            discardInstructionsText.textContent = "End of over! You can refresh your bowling hand.";
             
             // Reset discard count
             discardCount = 0;
@@ -1369,6 +1369,9 @@
             
             // Enable discard mode
             discardMode = true;
+            
+            // Update action text
+            setActionText();
             
             // Render player cards in discard mode
             renderPlayerCards();
@@ -1706,7 +1709,9 @@
         
         // Set action text based on current game state
         function setActionText() {
-            if (waitingForNextBall) {
+            if (discardMode) {
+                actionTextDisplay.textContent = 'Select cards to discard (up to 2)';
+            } else if (waitingForNextBall) {
                 actionTextDisplay.textContent = 'Click "Next Ball" to continue';
             } else if (userIsBowling && !bowlerCardPlayed) {
                 actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
