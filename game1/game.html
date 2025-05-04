@@ -423,10 +423,21 @@
             
             .card {
                 height: auto;
+                min-height: 450px;
             }
             
             .player-card {
-                width: 120px;
+                width: 150px;
+                height: 300px;
+                font-size: 0.7rem;
+            }
+            
+            .mini-card-body {
+                font-size: 0.7rem;
+            }
+            
+            .play-area {
+                gap: 15px;
             }
         }
 
@@ -752,7 +763,7 @@
                         type: ['GEN', 'SC', 'ST', 'OBC'][Math.floor(Math.random() * 4)],
                         turnout: Math.floor(Math.random() * 30) + 60,
                         margin: Math.floor(Math.random() * 25) + 1,
-                        female_support: (Math.random() * 5) - 2.5
+                        female_support: parseFloat((Math.random() * 5 - 2.5).toFixed(2))
                     });
                 }
             }
@@ -872,7 +883,7 @@
                         </div>
                         <div class="mini-card-info">
                             <span class="mini-info-label">Female Support:</span>
-                            <span>${card.female_support}</span>
+                            <span>${card.female_support}%</span>
                         </div>
                     </div>
                 `;
@@ -1033,7 +1044,7 @@
                     </div>
                     <div class="card-info">
                         <span class="info-label">Female Support:</span>
-                        <span class="info-value">${card.female_support}</span>
+                        <span class="info-value">${card.female_support}%</span>
                     </div>
                 </div>
             `;
