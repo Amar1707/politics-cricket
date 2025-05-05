@@ -584,9 +584,10 @@
             <h1>Cricket Card Game - Lok Sabha Elections 2024</h1>
             <p>Use election candidate cards to play cricket!</p>
         </header>
-        <!-- Add a deck counter to show remaining cards -->
-        <div class="card-count" id="deck-count" style="position: fixed; top: 10px; right: 10px; background-color: var(--primary-color); color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 1.1rem; z-index: 1000;">
-            Deck: <span id="deck-count-value">0</span> cards
+        
+        <!-- Deck counter with improved visibility -->
+        <div class="card-count" id="deck-count" style="position: fixed; top: 15px; right: 15px; background-color: #ff5722; color: white; padding: 10px 18px; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-size: 1.2rem; z-index: 1000; border: 2px solid white;">
+            <span style="font-size: 1.3rem; font-weight: bold;">🃏</span> <span id="deck-count-value">0</span> cards
         </div>
         
         <div id="start-screen">
@@ -1372,6 +1373,27 @@
                 }
             }
             
+            // Store the current innings data to preserve it for scorecards
+            if (currentInnings === 1) {
+                if (userIsBatting) {
+                    // Save user's batting stats in first innings
+                    window.firstInningsData = {
+                        team: "user",
+                        runs: userRuns,
+                        wickets: userWickets,
+                        overs: `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`
+                    };
+                } else {
+                    // Save computer's batting stats in first innings
+                    window.firstInningsData = {
+                        team: "comp",
+                        runs: compRuns,
+                        wickets: compWickets,
+                        overs: `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`
+                    };
+                }
+            }
+            
             // Show outcome area with detailed explanation
             outcomeMessage.innerHTML = `
                 <div class="refresh-info">${lastBallOutcome}</div>
@@ -1409,6 +1431,70 @@
                     
                     // Change next ball button text
                     nextBallBtn.textContent = "Manage Cards";
+                }
+            }
+            
+            // Check if last wicket just fell or all overs are complete
+            const oversCompleted = Math.floor(balls / BALLS_PER_OVER);
+            const ballsInCurrentOver = balls % BALLS_PER_OVER;
+            const currentWickets = userIsBatting ? userWickets : compWickets;
+            const currentTeam = userIsBatting ? "Your" : "Computer's";
+            
+            const inningsOver = oversCompleted >= TOTAL_OVERS || currentWickets >= TOTAL_WICKETS;
+            
+            if (inningsOver) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const oversText = `${oversCompleted}.${ballsInCurrentOver}`;
+                
+                if (isWicket && currentWickets >= TOTAL_WICKETS) {
+                    // Wicket just fell that ends the innings
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">WICKET! - All Out</div>
+                        <p>${currentTeam} team is all out!</p>
+                        <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
+                    `;
+                } else if (oversCompleted >= TOTAL_OVERS) {
+                    // All overs completed
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">Innings Complete</div>
+                        <p>${currentTeam} innings is over! All overs completed.</p>
+                        <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
+                    `;
+                }
+                
+                // In second innings, check if the game is over
+                if (currentInnings === 2) {
+                    const targetAchieved = (userIsBatting && userRuns >= target) || (!userIsBatting && compRuns >= target);
+                    
+                    if (!targetAchieved) {
+                        // Team failed to chase the target
+                        const defendingTeam = userIsBatting ? "Computer" : "You";
+                        const winningRuns = target - (userIsBatting ? userRuns : compRuns) - 1;
+                        
+                        outcomeMessage.innerHTML += `
+                            <p style="margin-top: 15px; font-weight: bold;">${defendingTeam} won by ${winningRuns} runs!</p>
+                        `;
+                    }
+                }
+            }
+            
+            // Check if target has been achieved in second innings
+            if (currentInnings === 2) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const targetAchieved = currentRuns >= target;
+                
+                if (targetAchieved) {
+                    const winningTeam = userIsBatting ? "You" : "Computer";
+                    const remainingWickets = TOTAL_WICKETS - currentWickets;
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    const oversText = `${oversCompleted}.${ballsInCurrentOver}`;
+                    
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">Target Achieved!</div>
+                        <p>${winningTeam} won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!</p>
+                        <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
+                        <p>Target of ${target} runs achieved with ${remainingBalls} ball${remainingBalls !== 1 ? 's' : ''} remaining.</p>
+                    `;
                 }
             }
             
@@ -2099,21 +2185,52 @@
             compRunsDisplay.textContent = compRuns;
             compWicketsDisplay.textContent = compWickets;
             
-            // Calculate overs (e.g. 2.3 means 2 overs and 3 balls)
-            const totalBalls = balls;
-            const userBalls = userIsBatting ? totalBalls : (currentInnings === 2 ? totalBalls : 0);
-            const compBalls = !userIsBatting ? totalBalls : (currentInnings === 2 ? totalBalls : 0);
+            // Get first innings data if exists
+            const firstInningsData = window.firstInningsData || null;
             
-            const userOvers = `${Math.floor(userBalls / BALLS_PER_OVER)}.${userBalls % BALLS_PER_OVER}`;
-            const compOvers = `${Math.floor(compBalls / BALLS_PER_OVER)}.${compBalls % BALLS_PER_OVER}`;
+            // Calculate overs for display
+            let userOvers, compOvers;
+            
+            if (currentInnings === 1) {
+                // First innings in progress
+                if (userIsBatting) {
+                    userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    compOvers = '0.0';
+                } else {
+                    userOvers = '0.0';
+                    compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                }
+            } else {
+                // Second innings - use stored data for first innings
+                if (firstInningsData) {
+                    if (firstInningsData.team === 'user') {
+                        // User batted first
+                        userOvers = firstInningsData.overs;
+                        compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    } else {
+                        // Computer batted first
+                        compOvers = firstInningsData.overs;
+                        userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                } else {
+                    // Fallback if no stored data
+                    if (userIsBatting) {
+                        userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                        compOvers = `${TOTAL_OVERS}.0`; // Assume completed
+                    } else {
+                        userOvers = `${TOTAL_OVERS}.0`; // Assume completed
+                        compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                }
+            }
             
             userOversDisplay.textContent = userOvers;
             compOversDisplay.textContent = compOvers;
             
             // Update current over and ball display for current innings
-            const currentOver = `${Math.floor(totalBalls / BALLS_PER_OVER)}.${totalBalls % BALLS_PER_OVER}`;
+            const currentOver = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
             currentOverDisplay.textContent = currentOver;
-            ballCountDisplay.textContent = totalBalls;
+            ballCountDisplay.textContent = balls;
             
             // Update deck count
             const deckCountValue = document.getElementById('deck-count-value');
@@ -2132,7 +2249,7 @@
                 
                 // If game is in second innings, add info about required runs
                 if (currentInnings === 2) {
-                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - totalBalls;
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
                     const remainingWickets = TOTAL_WICKETS - (userIsBatting ? userWickets : compWickets);
                     
                     if (requiredRuns > 0) {
@@ -2150,9 +2267,9 @@
             }
             
             // Calculate and update run rate
-            if (totalBalls > 0) {
+            if (balls > 0) {
                 const currentRuns = userIsBatting ? userRuns : compRuns;
-                const runRate = (currentRuns / totalBalls) * 6;
+                const runRate = (currentRuns / balls) * 6;
                 runRateDisplay.textContent = runRate.toFixed(2);
             } else {
                 runRateDisplay.textContent = '0.00';
