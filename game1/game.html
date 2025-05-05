@@ -585,8 +585,8 @@
             <p>Use election candidate cards to play cricket!</p>
         </header>
         <!-- Add a deck counter to show remaining cards -->
-        <div class="card-count" id="deck-count" style="position: fixed; top: 10px; right: 10px; background-color: var(--secondary-color); color: white; padding: 5px 10px; border-radius: 5px; font-weight: bold; box-shadow: var(--card-shadow);">
-            Deck: <span id="deck-count-value">0</span>
+        <div class="card-count" id="deck-count" style="position: fixed; top: 10px; right: 10px; background-color: var(--primary-color); color: white; padding: 8px 15px; border-radius: 8px; font-weight: bold; box-shadow: 0 3px 6px rgba(0,0,0,0.3); font-size: 1.1rem; z-index: 1000;">
+            Deck: <span id="deck-count-value">0</span> cards
         </div>
         
         <div id="start-screen">
@@ -1110,15 +1110,33 @@
         function computerPlaysBowlingCard() {
             if (gameOver || waitingForNextBall) return;
             
-            // Randomly select a card from computer's hand
-            const randomIndex = Math.floor(Math.random() * computerCards.length);
-            bowlerCardPlayed = computerCards[randomIndex];
+            // Strategy: pick a card with high vote_share for bowling
+            let bestIndex = 0;
+            let highestScore = -1;
+            
+            for (let i = 0; i < computerCards.length; i++) {
+                const card = computerCards[i];
+                let score = card.vote_share;
+                
+                // Bonus for special cards
+                if (card.gender === "FEMALE") score += 5; // Bonus for gender advantage
+                if (card.type === "SC" || card.type === "ST") score += 5; // Bonus for type advantage
+                
+                // Pick the card with highest score
+                if (score > highestScore) {
+                    highestScore = score;
+                    bestIndex = i;
+                }
+            }
+            
+            // Use the best card for bowling
+            bowlerCardPlayed = computerCards[bestIndex];
             
             // Display the card
             displayCard(bowlerCardPlayed, bowlerCardDisplay);
             
             // Remove the card from computer's hand
-            computerCards.splice(randomIndex, 1);
+            computerCards.splice(bestIndex, 1);
             
             // Draw a new card
             if (deck.length > 0) {
@@ -1130,21 +1148,61 @@
             
             // Log
             addLogEntry(`Computer bowled with <span class="log-highlight">${bowlerCardPlayed.name}</span> (${bowlerCardPlayed.vote_share}% vote share).`);
+            
+            // Update displays
+            updateDisplays();
         }
         
         // Computer plays a batting card
         function computerPlaysBattingCard() {
             if (gameOver || waitingForNextBall) return;
             
-            // Randomly select a card from computer's hand
-            const randomIndex = Math.floor(Math.random() * computerCards.length);
-            batterCardPlayed = computerCards[randomIndex];
+            // Strategy: if vote share is below bowler's, try to find a Rank 1 card
+            // Otherwise find highest vote share difference
+            
+            let bestIndex = 0;
+            let bestScore = -Infinity;
+            
+            for (let i = 0; i < computerCards.length; i++) {
+                const card = computerCards[i];
+                let score = 0;
+                
+                // If vote share is below bowler's but rank is 1, it's a good choice
+                if (card.vote_share < bowlerCardPlayed.vote_share && card.rank === 1) {
+                    score = 100; // Very high score for rank 1 cards when needed
+                } else {
+                    // Otherwise score based on vote share difference
+                    score = card.vote_share - bowlerCardPlayed.vote_share;
+                    
+                    // Special case matching
+                    if (card.party === bowlerCardPlayed.party) {
+                        score -= 20; // Bad choice if same party
+                    }
+                    if (bowlerCardPlayed.gender === "FEMALE" && card.gender !== "FEMALE") {
+                        score -= 20; // Bad choice if gender disadvantage
+                    }
+                    if (bowlerCardPlayed.type === "SC" && card.type !== "SC") {
+                        score -= 20; // Bad choice if type disadvantage
+                    }
+                    if (bowlerCardPlayed.type === "ST" && card.type !== "ST") {
+                        score -= 20; // Bad choice if type disadvantage
+                    }
+                }
+                
+                if (score > bestScore) {
+                    bestScore = score;
+                    bestIndex = i;
+                }
+            }
+            
+            // Use the best card for batting
+            batterCardPlayed = computerCards[bestIndex];
             
             // Display the card
             displayCard(batterCardPlayed, batterCardDisplay);
             
             // Remove the card from computer's hand
-            computerCards.splice(randomIndex, 1);
+            computerCards.splice(bestIndex, 1);
             
             // Draw a new card
             if (deck.length > 0) {
@@ -1156,6 +1214,9 @@
             
             // Log
             addLogEntry(`Computer batted with <span class="log-highlight">${batterCardPlayed.name}</span> (${batterCardPlayed.vote_share}% vote share).`);
+            
+            // Update displays
+            updateDisplays();
         }
         
         // Display a card in the card display area
@@ -1632,7 +1693,9 @@
         // Check if innings or game is over
         function checkInningsStatus() {
             const oversCompleted = Math.floor(balls / BALLS_PER_OVER);
+            const ballsInCurrentOver = balls % BALLS_PER_OVER;
             const currentWickets = userIsBatting ? userWickets : compWickets;
+            const currentTeam = userIsBatting ? "Your" : "Computer's";
             
             // Check if innings is over
             const inningsOver = oversCompleted >= TOTAL_OVERS || currentWickets >= TOTAL_WICKETS;
@@ -1644,10 +1707,73 @@
                 targetAchieved = currentRuns >= target;
             }
             
+            // If last wicket just fell or overs completed, show innings end message
+            if (inningsOver) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const oversText = `${oversCompleted}.${ballsInCurrentOver}`;
+                
+                if (currentInnings === 1) {
+                    // First innings coming to an end
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">Innings Complete</div>
+                        <p>${currentTeam} innings is over!</p>
+                        <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
+                    `;
+                    
+                    // Set waiting for next ball to ensure user acknowledges
+                    waitingForNextBall = true;
+                } else if (currentInnings === 2 && !targetAchieved) {
+                    // Second innings all out or overs complete without achieving target
+                    const defendingTeam = userIsBatting ? "Computer" : "You";
+                    const winningRuns = target - currentRuns - 1;
+                    
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">Innings Complete</div>
+                        <p>${currentTeam} innings is over!</p>
+                        <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
+                        <p>${defendingTeam} won by ${winningRuns} runs!</p>
+                    `;
+                    
+                    // Set waiting for next ball to ensure user acknowledges before game over
+                    waitingForNextBall = true;
+                }
+            }
+            
             // If innings is over or target achieved
             if (inningsOver || targetAchieved) {
+                // If target achieved in second innings, show message
+                if (currentInnings === 2 && targetAchieved) {
+                    const winningTeam = userIsBatting ? "You" : "Computer";
+                    const remainingWickets = TOTAL_WICKETS - currentWickets;
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    
+                    outcomeMessage.innerHTML = `
+                        <div class="refresh-info">Target Achieved!</div>
+                        <p>${winningTeam} won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!</p>
+                        <p>Target of ${target} runs achieved with ${remainingBalls} ball${remainingBalls !== 1 ? 's' : ''} remaining.</p>
+                    `;
+                    
+                    // Set waiting for next ball to ensure user acknowledges before game over
+                    waitingForNextBall = true;
+                }
+                
                 // If first innings is over
                 if (currentInnings === 1 && !targetAchieved) {
+                    // Store first innings data for scoreboard
+                    const firstInningsTeam = userIsBatting ? "user" : "comp";
+                    const firstInningsRuns = userIsBatting ? userRuns : compRuns;
+                    const firstInningsWickets = userIsBatting ? userWickets : compWickets;
+                    const firstInningsOvers = `${oversCompleted}.${ballsInCurrentOver}`;
+                    
+                    // Set as game property
+                    window.firstInningsData = {
+                        team: firstInningsTeam,
+                        runs: firstInningsRuns,
+                        wickets: firstInningsWickets,
+                        overs: firstInningsOvers
+                    };
+                    
+                    // Change to second innings
                     currentInnings = 2;
                     
                     // Set target for second innings
@@ -1657,24 +1783,22 @@
                         // Message for transition to player bowling
                         addLogEntry(`<span class="log-highlight">First innings over!</span> Computer needs ${target} runs to win.`);
                         
-                        const inningsMessage = `
+                        outcomeMessage.innerHTML = `
                             <div class="refresh-info">Innings Complete</div>
-                            <p>Your batting innings is over! You scored ${userRuns}/${userWickets} in ${oversCompleted}.${balls % BALLS_PER_OVER} overs.</p>
+                            <p>Your batting innings is over! You scored ${userRuns}/${userWickets} in ${oversCompleted}.${ballsInCurrentOver} overs.</p>
                             <p>Now you'll be bowling. Computer needs ${target} runs to win.</p>
                         `;
-                        outcomeMessage.innerHTML = inningsMessage;
                     } else {
                         target = compRuns + 1;
                         
                         // Message for transition to player batting
                         addLogEntry(`<span class="log-highlight">First innings over!</span> You need ${target} runs to win.`);
                         
-                        const inningsMessage = `
+                        outcomeMessage.innerHTML = `
                             <div class="refresh-info">Innings Complete</div>
-                            <p>Computer's batting innings is over! They scored ${compRuns}/${compWickets} in ${oversCompleted}.${balls % BALLS_PER_OVER} overs.</p>
+                            <p>Computer's batting innings is over! They scored ${compRuns}/${compWickets} in ${oversCompleted}.${ballsInCurrentOver} overs.</p>
                             <p>Now you'll be batting. You need ${target} runs to win.</p>
                         `;
-                        outcomeMessage.innerHTML = inningsMessage;
                     }
                     
                     // After first innings, switch roles and prepare for second innings
@@ -1704,9 +1828,12 @@
                     
                     // Update displays
                     updateDisplays();
-                } else {
-                    // Game is over - show the final result
-                    endGame();
+                } else if (currentInnings === 2 || targetAchieved) {
+                    // Wait for user to acknowledge before showing game over
+                    setTimeout(() => {
+                        // Game is over - show the final result
+                        endGame();
+                    }, 1500);
                 }
             }
         }
@@ -1777,31 +1904,40 @@
             // Show winner in result display
             resultDisplay.textContent = `${winner} won the match!`;
             
-            // Set final scorecard in the modal
+            // Get first innings data (if exists)
+            let firstInningsData = window.firstInningsData || null;
             let userOversPlayed, compOversPlayed;
             
-            if (currentInnings === 1) {
-                // First innings not complete
+            if (currentInnings === 2) {
+                // Both innings were played
+                if (firstInningsData) {
+                    // Use stored data for first innings
+                    if (firstInningsData.team === "user") {
+                        // User batted first
+                        userOversPlayed = firstInningsData.overs;
+                        compOversPlayed = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    } else {
+                        // Computer batted first
+                        compOversPlayed = firstInningsData.overs;
+                        userOversPlayed = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                } else {
+                    // Fallback if firstInningsData not available
+                    userOversPlayed = userIsBatting ? 
+                        `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                        `${TOTAL_OVERS}.0`;
+                    compOversPlayed = !userIsBatting ? 
+                        `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                        `${TOTAL_OVERS}.0`;
+                }
+            } else {
+                // Only one innings was played (shouldn't happen normally)
                 userOversPlayed = userIsBatting ? 
                     `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
                     '0.0';
                 compOversPlayed = !userIsBatting ? 
                     `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
                     '0.0';
-            } else {
-                // Both teams have batted
-                const firstInningsBalls = TOTAL_OVERS * BALLS_PER_OVER; // Assume first innings was completed
-                const secondInningsBalls = balls;
-                
-                if (userIsBatting) {
-                    // User is batting in second innings
-                    userOversPlayed = `${Math.floor(secondInningsBalls / BALLS_PER_OVER)}.${secondInningsBalls % BALLS_PER_OVER}`;
-                    compOversPlayed = `${TOTAL_OVERS}.0`; // Computer's innings was complete
-                } else {
-                    // Computer is batting in second innings
-                    userOversPlayed = `${TOTAL_OVERS}.0`; // User's innings was complete
-                    compOversPlayed = `${Math.floor(secondInningsBalls / BALLS_PER_OVER)}.${secondInningsBalls % BALLS_PER_OVER}`;
-                }
             }
             
             finalUserScore.textContent = `${userRuns}/${userWickets} (${userOversPlayed})`;
