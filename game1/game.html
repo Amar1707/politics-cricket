@@ -584,11 +584,7 @@
             <h1>Cricket Card Game - Lok Sabha Elections 2024</h1>
             <p>Use election candidate cards to play cricket!</p>
         </header>
-        
-        <!-- Deck counter with improved visibility -->
-        <div class="card-count" id="deck-count" style="position: fixed; top: 15px; right: 15px; background-color: #ff5722; color: white; padding: 10px 18px; border-radius: 10px; font-weight: bold; box-shadow: 0 4px 10px rgba(0,0,0,0.5); font-size: 1.2rem; z-index: 1000; border: 2px solid white;">
-            <span style="font-size: 1.3rem; font-weight: bold;">🃏</span> <span id="deck-count-value">0</span> cards
-        </div>
+    </div>
         
         <div id="start-screen">
             <h2 style="text-align: center; margin-bottom: 20px;">Choose Your Strategy</h2>
@@ -1926,6 +1922,27 @@
         
         // End the game
         function endGame() {
+            // Don't immediately end the game
+            // Instead, show a "View Final Result" button in the outcome area
+            
+            // Get the last ball data
+            const lastBallData = window.lastBallData || null;
+            
+            // Update the next ball button to show "View Final Result"
+            nextBallBtn.textContent = "View Final Result";
+            
+            // Change what happens when the button is clicked
+            nextBallBtn.onclick = function() {
+                // Now actually end the game
+                finalizeGameEnd();
+            };
+            
+            // Make sure the outcome area is visible
+            outcomeArea.classList.remove('hidden');
+        }
+        
+        // This function is called when the player clicks "View Final Result"
+        function finalizeGameEnd() {
             gameOver = true;
             
             // Determine the winner
