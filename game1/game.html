@@ -1280,32 +1280,34 @@
             } else {
                 // If no wicket, calculate runs based on the new rules
                 
-                // Special cases first:
+                // Apply special cases only if batter's vote_share is greater than bowler's
                 let specialCaseApplied = false;
                 
-                // 1. If both cards belong to the same party, compute 0 runs
-                if (batterCardPlayed.party === bowlerCardPlayed.party) {
-                    runsScored = 0;
-                    outcomeDescription = `Both players belong to ${batterCardPlayed.party} party. No runs scored.`;
-                    specialCaseApplied = true;
-                }
-                // 2. For FEMALE bowlers, non-FEMALE batters get 0 runs
-                else if (bowlerCardPlayed.gender === "FEMALE" && batterCardPlayed.gender !== "FEMALE") {
-                    runsScored = 0;
-                    outcomeDescription = `${bowlerCardPlayed.name} (FEMALE) bowled to ${batterCardPlayed.name} (${batterCardPlayed.gender}). Gender advantage - no runs scored.`;
-                    specialCaseApplied = true;
-                }
-                // 3. For SC bowlers, non-SC batters get 0 runs
-                else if (bowlerCardPlayed.type === "SC" && batterCardPlayed.type !== "SC") {
-                    runsScored = 0;
-                    outcomeDescription = `${bowlerCardPlayed.name} (SC) bowled to ${batterCardPlayed.name} (${batterCardPlayed.type}). Caste advantage - no runs scored.`;
-                    specialCaseApplied = true;
-                }
-                // 4. For ST bowlers, non-ST batters get 0 runs
-                else if (bowlerCardPlayed.type === "ST" && batterCardPlayed.type !== "ST") {
-                    runsScored = 0;
-                    outcomeDescription = `${bowlerCardPlayed.name} (ST) bowled to ${batterCardPlayed.name} (${batterCardPlayed.type}). Tribal advantage - no runs scored.`;
-                    specialCaseApplied = true;
+                if (batterCardPlayed.vote_share > bowlerCardPlayed.vote_share) {
+                    // 1. If both cards belong to the same party, compute 0 runs
+                    if (batterCardPlayed.party === bowlerCardPlayed.party) {
+                        runsScored = 0;
+                        outcomeDescription = `Both players belong to ${batterCardPlayed.party} party. No runs scored despite higher vote share.`;
+                        specialCaseApplied = true;
+                    }
+                    // 2. For FEMALE bowlers, non-FEMALE batters get 0 runs
+                    else if (bowlerCardPlayed.gender === "FEMALE" && batterCardPlayed.gender !== "FEMALE") {
+                        runsScored = 0;
+                        outcomeDescription = `${bowlerCardPlayed.name} (FEMALE) bowled to ${batterCardPlayed.name} (${batterCardPlayed.gender}). Gender advantage - no runs scored despite higher vote share.`;
+                        specialCaseApplied = true;
+                    }
+                    // 3. For SC bowlers, non-SC batters get 0 runs
+                    else if (bowlerCardPlayed.type === "SC" && batterCardPlayed.type !== "SC") {
+                        runsScored = 0;
+                        outcomeDescription = `${bowlerCardPlayed.name} (SC) bowled to ${batterCardPlayed.name} (${batterCardPlayed.type}). Caste advantage - no runs scored despite higher vote share.`;
+                        specialCaseApplied = true;
+                    }
+                    // 4. For ST bowlers, non-ST batters get 0 runs
+                    else if (bowlerCardPlayed.type === "ST" && batterCardPlayed.type !== "ST") {
+                        runsScored = 0;
+                        outcomeDescription = `${bowlerCardPlayed.name} (ST) bowled to ${batterCardPlayed.name} (${batterCardPlayed.type}). Tribal advantage - no runs scored despite higher vote share.`;
+                        specialCaseApplied = true;
+                    }
                 }
                 // Otherwise, calculate runs based on the vote_share difference
                 else {
@@ -1884,9 +1886,8 @@
             // Set game as over
             gameOver = true;
             
-            // Keep the ball outcome visible, only hide innings summary area
-            // outcomeArea remains visible so players can see the final ball's outcome
-            inningsSummaryArea.classList.add('hidden');
+            // Keep both the ball outcome and innings summary visible
+            // Both outcomeArea and inningsSummaryArea remain visible for context
             
             // Determine the winner
             let winner = '';
