@@ -514,53 +514,71 @@
             color: var(--secondary-color);
         }
         
-        /* New styles for ball outcome display and innings summary */
-        .results-container {
-            display: flex;
-            flex-direction: column;
-            gap: 20px;
-            margin: 20px 0;
-        }
-        
-        .ball-outcome-display {
+        /* New styles for separate ball outcome display */
+        .ball-outcome-area {
             background-color: white;
             padding: 15px;
             border-radius: var(--border-radius);
+            margin: 10px auto 20px;
             box-shadow: var(--card-shadow);
             text-align: center;
+            max-width: 600px;
         }
         
         .ball-outcome-title {
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             font-weight: bold;
             margin-bottom: 10px;
             color: var(--secondary-color);
         }
         
-        .ball-outcome-result {
-            font-size: 1.8rem;
+        .ball-outcome-message {
+            font-size: 1.3rem;
             font-weight: bold;
-            margin: 10px 0;
+            margin-bottom: 10px;
         }
         
         .ball-outcome-details {
-            font-size: 1.1rem;
-            margin: 10px 0;
+            margin-top: 10px;
+            padding: 8px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            font-size: 0.95rem;
         }
         
-        .innings-summary-display {
+        /* Innings summary area */
+        .innings-summary-area {
             background-color: white;
-            padding: 15px;
+            padding: 20px;
             border-radius: var(--border-radius);
+            margin: 20px auto;
             box-shadow: var(--card-shadow);
+            text-align: center;
+            max-width: 600px;
+            border-left: 4px solid var(--accent-color);
         }
         
         .innings-summary-title {
-            font-size: 1.2rem;
+            font-size: 1.3rem;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
             color: var(--secondary-color);
+        }
+        
+        .innings-summary-message {
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+        }
+        
+        .final-game-summary {
+            background-color: white;
+            padding: 20px;
+            border-radius: var(--border-radius);
+            margin: 20px auto;
+            box-shadow: var(--card-shadow);
             text-align: center;
+            max-width: 800px;
+            border-left: 4px solid var(--primary-color);
         }
     </style>
 </head>
@@ -624,25 +642,42 @@
                     </div>
                 </div>
                 
-                <!-- New results container for ball outcome and innings summary -->
-                <div class="results-container">
-                    <div id="ball-outcome-display" class="ball-outcome-display hidden">
-                        <div class="ball-outcome-title">Last Ball Outcome</div>
-                        <div id="ball-outcome-result" class="ball-outcome-result">4 RUNS!</div>
-                        <div id="ball-outcome-details" class="ball-outcome-details">Vote share difference (12.5%) is between 12-15%. 4 runs scored.</div>
-                    </div>
-                    
-                    <div id="innings-summary-display" class="innings-summary-display hidden">
-                        <div class="innings-summary-title">Innings Summary</div>
-                        <div id="innings-summary-content">
-                            <p>First innings completed! Final score: 120/4 in 6.0 overs.</p>
-                            <p>Target: 121 runs to win.</p>
-                        </div>
+                <!-- New separate ball outcome display area -->
+                <div id="ball-outcome-display" class="ball-outcome-area hidden">
+                    <div class="ball-outcome-title">Last Ball Result</div>
+                    <div id="ball-outcome-result" class="ball-outcome-message">4 RUNS!</div>
+                    <div id="ball-outcome-details" class="ball-outcome-details">
+                        Vote share difference (13.5%) is between 12-15%. 4 runs scored.
                     </div>
                 </div>
                 
-                <div id="ball-result-display" class="hidden">
-                    <div id="ball-result" class="ball-result">4 RUNS!</div>
+                <div id="innings-summary-display" class="innings-summary-area hidden">
+                    <div class="innings-summary-title">Innings Summary</div>
+                    <div id="innings-summary-message" class="innings-summary-message">
+                        First innings complete! You scored 120/4 in 6.0 overs.
+                    </div>
+                    <button id="continue-btn" class="next-ball-btn">Continue to Next Innings</button>
+                </div>
+                
+                <div id="final-game-summary" class="final-game-summary hidden">
+                    <div class="final-score-title">Final Match Result</div>
+                    <div id="final-summary-message" class="innings-summary-message">
+                        You won by 5 wickets!
+                    </div>
+                    <div class="final-scoreboard">
+                        <div class="final-score-row">
+                            <span class="final-score-label">Your Score:</span>
+                            <span id="final-user-score">0/0 (0.0)</span>
+                        </div>
+                        <div class="final-score-row">
+                            <span class="final-score-label">Computer Score:</span>
+                            <span id="final-comp-score">0/0 (0.0)</span>
+                        </div>
+                        <div class="final-score-row">
+                            <span class="final-score-label">Result:</span>
+                            <span id="final-result">-</span>
+                        </div>
+                    </div>
                 </div>
                 
                 <div class="board">
@@ -756,7 +791,7 @@
                         </div>
                     </div>
                     
-                    <!-- Outcome area for ball results, moved below the play area -->
+                    <!-- Original outcome area modified for ball-by-ball actions -->
                     <div id="outcome-area" class="outcome-area hidden">
                         <div class="outcome-title">Ball Outcome</div>
                         <div id="outcome-message" class="outcome-message">4 RUNS!</div>
@@ -778,23 +813,6 @@
                 <div class="game-log">
                     <div class="log-title">Match Commentary</div>
                     <div id="log-entries"></div>
-                </div>
-                
-                <!-- Final scoreboard that will appear at the end of the game -->
-                <div id="final-scoreboard" class="final-scoreboard hidden">
-                    <div class="final-score-title">Final Scorecard</div>
-                    <div class="final-score-row">
-                        <span class="final-score-label">Your Score:</span>
-                        <span id="final-user-score">0/0 (0.0)</span>
-                    </div>
-                    <div class="final-score-row">
-                        <span class="final-score-label">Computer Score:</span>
-                        <span id="final-comp-score">0/0 (0.0)</span>
-                    </div>
-                    <div class="final-score-row">
-                        <span class="final-score-label">Result:</span>
-                        <span id="final-result">-</span>
-                    </div>
                 </div>
             </div>
         </div>
@@ -820,8 +838,8 @@
         let lastBallOutcome = null;
         let lastBallRuns = 0;
         let lastBallWicket = false;
-        let lastBallDetails = "";
         let waitingForNextBall = false;
+        let lastBallDetails = "";
         
         // Constants
         const TOTAL_OVERS = 6;
@@ -852,29 +870,31 @@
         const logEntriesDisplay = document.getElementById('log-entries');
         const userInningsIndicator = document.getElementById('user-innings-indicator');
         const compInningsIndicator = document.getElementById('comp-innings-indicator');
+        const playAgainBtn = document.getElementById('play-again-btn');
         const resultDisplay = document.getElementById('result-display');
-        const ballResultDisplay = document.getElementById('ball-result-display');
-        const ballResult = document.getElementById('ball-result');
         const outcomeArea = document.getElementById('outcome-area');
         const outcomeMessage = document.getElementById('outcome-message');
         const nextBallBtn = document.getElementById('next-ball-btn');
         const finalUserScore = document.getElementById('final-user-score');
         const finalCompScore = document.getElementById('final-comp-score');
         const finalResult = document.getElementById('final-result');
-        const finalScoreboard = document.getElementById('final-scoreboard');
         
-        // New DOM elements for separate ball outcome and innings summary
+        // New DOM elements for the separate display areas
         const ballOutcomeDisplay = document.getElementById('ball-outcome-display');
         const ballOutcomeResult = document.getElementById('ball-outcome-result');
         const ballOutcomeDetails = document.getElementById('ball-outcome-details');
         const inningsSummaryDisplay = document.getElementById('innings-summary-display');
-        const inningsSummaryContent = document.getElementById('innings-summary-content');
+        const inningsSummaryMessage = document.getElementById('innings-summary-message');
+        const continueBtn = document.getElementById('continue-btn');
+        const finalGameSummary = document.getElementById('final-game-summary');
+        const finalSummaryMessage = document.getElementById('final-summary-message');
         
         // Event listeners
         batFirstBtn.addEventListener('click', () => startGame(true));
         bowlFirstBtn.addEventListener('click', () => startGame(false));
         resetBtn.addEventListener('click', resetGame);
         nextBallBtn.addEventListener('click', prepareNextBall);
+        continueBtn.addEventListener('click', continueToNextInnings);
         
         // Initialize the game
         async function initGame() {
@@ -918,9 +938,6 @@
             startScreen.classList.add('hidden');
             gameScreen.classList.remove('hidden');
             
-            // Hide the final scoreboard if it was visible
-            finalScoreboard.classList.add('hidden');
-            
             // Set game mode
             userIsBatting = userBatsFirst;
             userIsBowling = !userBatsFirst;
@@ -952,6 +969,11 @@
                 // If computer is bowling first, computer plays a bowling card
                 computerPlaysBowlingCard();
             }
+            
+            // Reset any outcome displays
+            ballOutcomeDisplay.classList.add('hidden');
+            inningsSummaryDisplay.classList.add('hidden');
+            finalGameSummary.classList.add('hidden');
             
             // Log game start
             addLogEntry(`<span class="log-highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
@@ -1392,13 +1414,12 @@
                 }
             }
             
-            // Show ball outcome in separate display
+            // Update the ball outcome display first to show what happened
             ballOutcomeResult.textContent = lastBallOutcome;
-            ballOutcomeResult.className = isWicket ? 'ball-outcome-result wicket' : 'ball-outcome-result runs';
-            ballOutcomeDetails.textContent = outcomeDescription;
+            ballOutcomeDetails.textContent = lastBallDetails;
             ballOutcomeDisplay.classList.remove('hidden');
             
-            // Show outcome area with action button
+            // Show outcome area with detailed explanation
             outcomeMessage.innerHTML = `
                 <div class="refresh-info">${lastBallOutcome}</div>
                 <p>${outcomeDescription}</p>
@@ -1423,7 +1444,7 @@
                 addLogEntry(`<span class="log-highlight">End of over ${currentOver}</span>`);
                 
                 // At the end of each but the last over, bowler can refresh cards
-                if (currentOver < TOTAL_OVERS - 1) {
+                if (currentOver < TOTAL_OVERS) {
                     // Determine who is bowling in the current innings
                     const userIsBowlingNow = (userIsBatting === false);
                     
@@ -1450,19 +1471,19 @@
                 const currentRuns = userIsBatting ? userRuns : compRuns;
                 const oversText = `${oversCompleted}.${ballsInCurrentOver}`;
                 
-                // Display innings summary while still showing the last ball outcome
-                let inningsSummaryHTML = '';
-                
+                // Show innings summary display instead of just updating the outcome area
                 if (isWicket && currentWickets >= TOTAL_WICKETS) {
                     // Wicket just fell that ends the innings
-                    inningsSummaryHTML = `
-                        <p><strong>${currentTeam} team is all out!</strong></p>
+                    inningsSummaryMessage.innerHTML = `
+                        <div class="refresh-info">WICKET! - All Out</div>
+                        <p>${currentTeam} team is all out!</p>
                         <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
                     `;
                 } else if (oversCompleted >= TOTAL_OVERS) {
                     // All overs completed
-                    inningsSummaryHTML = `
-                        <p><strong>${currentTeam} innings is over! All overs completed.</strong></p>
+                    inningsSummaryMessage.innerHTML = `
+                        <div class="refresh-info">Innings Complete</div>
+                        <p>${currentTeam} innings is over! All overs completed.</p>
                         <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
                     `;
                 }
@@ -1476,15 +1497,27 @@
                         const defendingTeam = userIsBatting ? "Computer" : "You";
                         const winningRuns = target - (userIsBatting ? userRuns : compRuns) - 1;
                         
-                        inningsSummaryHTML += `
-                            <p><strong>${defendingTeam} won by ${winningRuns} runs!</strong></p>
+                        inningsSummaryMessage.innerHTML += `
+                            <p style="margin-top: 15px; font-weight: bold;">${defendingTeam} won by ${winningRuns} runs!</p>
                         `;
                     }
                 }
                 
-                // Show innings summary
-                inningsSummaryContent.innerHTML = inningsSummaryHTML;
+                // Show the innings summary display
                 inningsSummaryDisplay.classList.remove('hidden');
+                
+                // Keep the ball outcome display visible
+                ballOutcomeDisplay.classList.remove('hidden');
+                
+                // Change the continue button text based on whether it's first or second innings
+                if (currentInnings === 1) {
+                    continueBtn.textContent = "Start Second Innings";
+                } else {
+                    continueBtn.textContent = "View Final Result";
+                }
+                
+                // Hide the regular outcome area since we're showing the innings summary
+                outcomeArea.classList.add('hidden');
             }
             
             // Check if target has been achieved in second innings
@@ -1498,20 +1531,227 @@
                     const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
                     const oversText = `${oversCompleted}.${ballsInCurrentOver}`;
                     
-                    // Display innings summary
-                    const inningsSummaryHTML = `
-                        <p><strong>${winningTeam} won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!</strong></p>
+                    inningsSummaryMessage.innerHTML = `
+                        <div class="refresh-info">Target Achieved!</div>
+                        <p>${winningTeam} won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!</p>
                         <p>Final Score: ${currentRuns}/${currentWickets} in ${oversText} overs.</p>
                         <p>Target of ${target} runs achieved with ${remainingBalls} ball${remainingBalls !== 1 ? 's' : ''} remaining.</p>
                     `;
                     
-                    inningsSummaryContent.innerHTML = inningsSummaryHTML;
+                    // Show the innings summary display
                     inningsSummaryDisplay.classList.remove('hidden');
+                    
+                    // Keep the ball outcome display visible
+                    ballOutcomeDisplay.classList.remove('hidden');
+                    
+                    // Change the continue button text
+                    continueBtn.textContent = "View Final Result";
+                    
+                    // Hide the regular outcome area since we're showing the innings summary
+                    outcomeArea.classList.add('hidden');
                 }
             }
             
             // Check if innings/game is over (but don't proceed automatically)
             checkInningsStatus();
+        }
+        
+        // Continue to next innings or show final result
+        function continueToNextInnings() {
+            if (currentInnings === 1) {
+                // Transition to second innings
+                setupSecondInnings();
+            } else {
+                // Show final result
+                showFinalResult();
+            }
+        }
+        
+        // Set up the second innings
+        function setupSecondInnings() {
+            // Hide innings summary
+            inningsSummaryDisplay.classList.add('hidden');
+            
+            // Reset cards for next ball
+            bowlerCardPlayed = null;
+            batterCardPlayed = null;
+            
+            // Reset waiting state
+            waitingForNextBall = false;
+            
+            // Reset button text
+            nextBallBtn.textContent = "Next Ball";
+            
+            // Reset card displays
+            resetCardDisplays();
+            
+            // Change innings and roles
+            currentInnings = 2;
+            const wasUserBatting = userIsBatting;
+            userIsBatting = !wasUserBatting;
+            userIsBowling = wasUserBatting;
+            
+            // Update innings indicators
+            if (userIsBatting) {
+                userInningsIndicator.classList.remove('hidden');
+                compInningsIndicator.classList.add('hidden');
+            } else {
+                userInningsIndicator.classList.add('hidden');
+                compInningsIndicator.classList.remove('hidden');
+            }
+            
+            // Reset balls count for new innings
+            balls = 0;
+            
+            // Reset card refresh variables
+            cardRefreshCount = 0;
+            isCardRefreshTime = false;
+            
+            // The bowler always plays first for the first ball of the new innings
+            if (userIsBowling) {
+                // User is bowling in second innings
+                actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+            } else {
+                // Computer is bowling in second innings
+                computerPlaysBowlingCard();
+            }
+            
+            // Update player cards to make them clickable again
+            renderPlayerCards();
+            
+            // Hide ball outcome display for the start of the new innings
+            ballOutcomeDisplay.classList.add('hidden');
+            
+            // Update displays for second innings
+            updateDisplays();
+            
+            // Log the start of second innings
+            if (userIsBatting) {
+                addLogEntry(`<span class="log-highlight">Second innings started!</span> You need ${target} runs to win.`);
+            } else {
+                addLogEntry(`<span class="log-highlight">Second innings started!</span> Computer needs ${target} runs to win.`);
+            }
+        }
+        
+        // Show the final result
+        function showFinalResult() {
+            gameOver = true;
+            
+            // Hide innings summary
+            inningsSummaryDisplay.classList.add('hidden');
+            
+            // Determine the winner
+            let winner = '';
+            let winMessage = '';
+            let winReason = '';
+            
+            if (currentInnings === 2) {
+                const userBattedSecond = userIsBatting;
+                const compBattedSecond = !userIsBatting;
+                
+                if ((userBattedSecond && userRuns >= target) || (compBattedSecond && compRuns < target)) {
+                    winner = 'You';
+                    const remainingWickets = TOTAL_WICKETS - userWickets;
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    
+                    if (userBattedSecond) {
+                        winMessage = `You won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!`;
+                        winReason = `You successfully chased down the target of ${target} runs with ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''} and ${remainingBalls} ball${remainingBalls !== 1 ? 's' : ''} remaining.`;
+                    } else {
+                        winMessage = `You won by ${target - compRuns - 1} runs!`;
+                        winReason = `You successfully defended your total of ${userRuns} runs, restricting the computer to ${compRuns}/${compWickets} in ${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER} overs.`;
+                    }
+                } else if ((compBattedSecond && compRuns >= target) || (userBattedSecond && userRuns < target)) {
+                    winner = 'Computer';
+                    const remainingWickets = TOTAL_WICKETS - compWickets;
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    
+                    if (compBattedSecond) {
+                        winMessage = `Computer won by ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''}!`;
+                        winReason = `Computer successfully chased down the target of ${target} runs with ${remainingWickets} wicket${remainingWickets !== 1 ? 's' : ''} and ${remainingBalls} ball${remainingBalls !== 1 ? 's' : ''} remaining.`;
+                    } else {
+                        winMessage = `Computer won by ${target - userRuns - 1} runs!`;
+                        winReason = `Computer successfully defended its total of ${compRuns} runs, restricting you to ${userRuns}/${userWickets} in ${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER} overs.`;
+                    }
+                } else {
+                    // This shouldn't happen with the current logic, but just in case
+                    winner = 'Nobody';
+                    winMessage = 'The game ended in a tie!';
+                    winReason = 'Both teams scored exactly the same number of runs.';
+                }
+            } else {
+                // If game ended after first innings (shouldn't happen with current logic)
+                if (userRuns > compRuns) {
+                    winner = 'You';
+                    winMessage = `You won by ${userRuns - compRuns} runs!`;
+                    winReason = 'Game ended after the first innings.';
+                } else if (compRuns > userRuns) {
+                    winner = 'Computer';
+                    winMessage = `Computer won by ${compRuns - userRuns} runs!`;
+                    winReason = 'Game ended after the first innings.';
+                } else {
+                    winner = 'Nobody';
+                    winMessage = 'The game ended in a tie!';
+                    winReason = 'Both teams scored exactly the same number of runs.';
+                }
+            }
+            
+            // Get first innings data (if exists)
+            let firstInningsData = window.firstInningsData || null;
+            let userOversPlayed, compOversPlayed;
+            
+            if (currentInnings === 2) {
+                // Both innings were played
+                if (firstInningsData) {
+                    // Use stored data for first innings
+                    if (firstInningsData.team === "user") {
+                        // User batted first
+                        userOversPlayed = firstInningsData.overs;
+                        compOversPlayed = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    } else {
+                        // Computer batted first
+                        compOversPlayed = firstInningsData.overs;
+                        userOversPlayed = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                } else {
+                    // Fallback if firstInningsData not available
+                    userOversPlayed = userIsBatting ? 
+                        `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                        `${TOTAL_OVERS}.0`;
+                    compOversPlayed = !userIsBatting ? 
+                        `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                        `${TOTAL_OVERS}.0`;
+                }
+            } else {
+                // Only one innings was played (shouldn't happen normally)
+                userOversPlayed = userIsBatting ? 
+                    `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                    '0.0';
+                compOversPlayed = !userIsBatting ? 
+                    `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                    '0.0';
+            }
+            
+            // Update the final score display
+            finalUserScore.textContent = `${userRuns}/${userWickets} (${userOversPlayed})`;
+            finalCompScore.textContent = `${compRuns}/${compWickets} (${compOversPlayed})`;
+            finalResult.textContent = winMessage;
+            
+            // Show the final game summary
+            finalSummaryMessage.innerHTML = `
+                <p>${winMessage}</p>
+                <p>${winReason}</p>
+            `;
+            finalGameSummary.classList.remove('hidden');
+            
+            // Hide the ball outcome display
+            ballOutcomeDisplay.classList.add('hidden');
+            
+            // Log the result
+            addLogEntry(`<span class="log-highlight">GAME OVER!</span> ${winMessage} ${winReason}`);
+            
+            // Update action text
+            actionTextDisplay.textContent = 'Game over! Click "Reset Game" to play again.';
         }
         
         // Variable to track card refresh opportunities for the bowler
@@ -1526,7 +1766,7 @@
             const currentOver = Math.floor(balls / BALLS_PER_OVER);
             
             // If we just finished an over (but not the last one) and we haven't used all refresh opportunities
-            if (balls % BALLS_PER_OVER === 0 && currentOver < TOTAL_OVERS - 1 && cardRefreshCount < 2) {
+            if (balls % BALLS_PER_OVER === 0 && currentOver < TOTAL_OVERS && cardRefreshCount < 2) {
                 // If button text is "Manage Cards" or we're already in refresh mode
                 if (nextBallBtn.textContent === "Manage Cards" || isCardRefreshTime) {
                     isCardRefreshTime = true;
@@ -1582,3 +1822,495 @@
                     cardRefreshCount = 0;
                     isCardRefreshTime = false;
                 }
+            }
+            
+            // Regular next ball logic
+            // Hide outcome area and ball outcome display
+            outcomeArea.classList.add('hidden');
+            ballOutcomeDisplay.classList.add('hidden');
+            
+            // Reset cards for next ball
+            bowlerCardPlayed = null;
+            batterCardPlayed = null;
+            
+            // Reset waiting state
+            waitingForNextBall = false;
+            
+            // Reset button text
+            nextBallBtn.textContent = "Next Ball";
+            
+            // Reset card displays
+            resetCardDisplays();
+            
+            // The bowler always plays first for the next ball
+            if ((userIsBatting && !userIsBowling) || (!userIsBatting && !userIsBowling)) {
+                // Computer is bowling
+                computerPlaysBowlingCard();
+            } else {
+                // User is bowling
+                setActionText();
+            }
+            
+            // Update player cards to make them clickable again
+            renderPlayerCards();
+        }
+        
+        // Show interface for user to refresh cards
+        function showCardRefreshInterface() {
+            // Display card refresh interface
+            outcomeMessage.innerHTML = `<div class="refresh-info">Card Refresh (${cardRefreshCount + 1}/2)</div>
+                                        Select a card to discard and draw a new one`;
+            
+            // Display player cards with discard option
+            playerCardsDisplay.innerHTML = '';
+            
+            playerCards.forEach((card, index) => {
+                const cardElement = document.createElement('div');
+                cardElement.className = 'player-card card-refresh-highlight';
+                cardElement.dataset.index = index;
+                
+                cardElement.innerHTML = `
+                    <div class="mini-card-header">${card.name}</div>
+                    <img src="${card.photo}" alt="${card.name}" class="mini-player-image">
+                    <div class="mini-card-body">
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Party:</span>
+                            <span>${card.party}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Vote Share:</span>
+                            <span>${card.vote_share}%</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Rank:</span>
+                            <span>${card.rank}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Gender:</span>
+                            <span>${card.gender}</span>
+                        </div>
+                        <div class="mini-card-info">
+                            <span class="mini-info-label">Type:</span>
+                            <span>${card.type}</span>
+                        </div>
+                        <button class="discard-btn">Discard</button>
+                    </div>
+                `;
+                
+                // Add click handler for card discard
+                cardElement.addEventListener('click', () => discardAndDrawCard(index));
+                
+                playerCardsDisplay.appendChild(cardElement);
+            });
+            
+            // Update action text
+            actionTextDisplay.textContent = `Select a card to discard (${cardRefreshCount + 1}/2)`;
+        }
+        
+        // User discards a card and draws a new one
+        function discardAndDrawCard(index) {
+            // Get the discarded card info for the log
+            const discardedCard = playerCards[index];
+            
+            // Remove the card from player's hand
+            playerCards.splice(index, 1);
+            
+            // Draw a new card
+            let newCard = null;
+            if (deck.length > 0) {
+                newCard = deck.shift();
+                playerCards.push(newCard);
+                addLogEntry(`You discarded <span class="log-highlight">${discardedCard.name}</span> (${discardedCard.vote_share}% vote share) and drew a new card.`);
+            } else {
+                addLogEntry(`You discarded <span class="log-highlight">${discardedCard.name}</span>, but the deck is empty!`);
+            }
+            
+            // Increment refresh count
+            cardRefreshCount++;
+            
+            // Check if user has used all refreshes
+            if (cardRefreshCount < 2) {
+                // Still has one more refresh
+                outcomeMessage.innerHTML = `
+                    <div class="refresh-info">Card Refresh (${cardRefreshCount}/2)</div>
+                    <p>You discarded <strong>${discardedCard.name}</strong>.</p>
+                    ${newCard ? `<p>You drew <strong>${newCard.name}</strong> (${newCard.party}, ${newCard.vote_share}% vote share).</p>` : ''}
+                    <p>You can discard one more card.</p>
+                `;
+                showCardRefreshInterface();
+            } else {
+                // Used all refreshes, proceed to next ball
+                outcomeMessage.innerHTML = `
+                    <div class="refresh-info">Card Refresh Complete</div>
+                    <p>You discarded <strong>${discardedCard.name}</strong>.</p>
+                    ${newCard ? `<p>You drew <strong>${newCard.name}</strong> (${newCard.party}, ${newCard.vote_share}% vote share).</p>` : ''}
+                    <p>You have refreshed cards twice. Ready for next over!</p>
+                `;
+                nextBallBtn.textContent = "Start Next Over";
+                cardRefreshCount = 0;
+                isCardRefreshTime = false;
+                
+                // Re-render player cards
+                renderPlayerCards();
+            }
+            
+            // Update displays
+            updateDisplays();
+        }
+        
+        // Computer automatically refreshes cards
+        function computerRefreshCards() {
+            // Find the card with the lowest vote_share to discard
+            let lowestIndex = 0;
+            let lowestVoteShare = computerCards[0].vote_share;
+            
+            for (let i = 1; i < computerCards.length; i++) {
+                if (computerCards[i].vote_share < lowestVoteShare) {
+                    lowestVoteShare = computerCards[i].vote_share;
+                    lowestIndex = i;
+                }
+            }
+            
+            // Get the card info for the log
+            const discardedCard = computerCards[lowestIndex];
+            
+            // Remove the card with lowest vote_share
+            computerCards.splice(lowestIndex, 1);
+            
+            // Draw a new card
+            let newCard = null;
+            if (deck.length > 0) {
+                newCard = deck.shift();
+                computerCards.push(newCard);
+                addLogEntry(`Computer discarded <span class="log-highlight">${discardedCard.name}</span> (${discardedCard.vote_share}% vote share) and drew a new card.`);
+            } else {
+                addLogEntry(`Computer discarded <span class="log-highlight">${discardedCard.name}</span>, but the deck is empty!`);
+            }
+            
+            // Update displays
+            updateDisplays();
+        }
+        
+        // Check if innings or game is over
+        function checkInningsStatus() {
+            const oversCompleted = Math.floor(balls / BALLS_PER_OVER);
+            const ballsInCurrentOver = balls % BALLS_PER_OVER;
+            const currentWickets = userIsBatting ? userWickets : compWickets;
+            const currentTeam = userIsBatting ? "Your" : "Computer's";
+            
+            // Check if innings is over
+            const inningsOver = oversCompleted >= TOTAL_OVERS || currentWickets >= TOTAL_WICKETS;
+            
+            // Check if target has been achieved in second innings
+            let targetAchieved = false;
+            if (currentInnings === 2) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                targetAchieved = currentRuns >= target;
+            }
+            
+            if (inningsOver || targetAchieved) {
+                // If first innings is over
+                if (currentInnings === 1) {
+                    // Set target for second innings
+                    if (userIsBatting) {
+                        target = userRuns + 1;
+                    } else {
+                        target = compRuns + 1;
+                    }
+                }
+            }
+        }
+        
+        // Reset card displays
+        function resetCardDisplays() {
+            bowlerCardDisplay.innerHTML = `
+                <div class="card-header">Select a card to start</div>
+                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                <div class="card-body">
+                    <div class="card-info">
+                        <span class="info-label">Party:</span>
+                        <span class="info-value party-tag">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Female Turnout Edge:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                </div>
+            `;
+            
+            batterCardDisplay.innerHTML = `
+                <div class="card-header">Select a card to start</div>
+                <img src="/api/placeholder/400/180" alt="Candidate Photo" class="player-image">
+                <div class="card-body">
+                    <div class="card-info">
+                        <span class="info-label">Party:</span>
+                        <span class="info-value party-tag">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                    <div class="card-info">
+                        <span class="info-label">Female Turnout Edge:</span>
+                        <span class="info-value">-</span>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Set action text based on current game state
+        function setActionText() {
+            if (isCardRefreshTime) {
+                actionTextDisplay.textContent = `Select a card to discard (${cardRefreshCount + 1}/2)`;
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Start Second Innings") {
+                actionTextDisplay.textContent = 'Click "Start Second Innings" to continue';
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Manage Cards") {
+                actionTextDisplay.textContent = 'Click "Manage Cards" to refresh your cards';
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Start Next Over") {
+                actionTextDisplay.textContent = 'Click "Start Next Over" to continue';
+            } else if (waitingForNextBall) {
+                actionTextDisplay.textContent = 'Click "Next Ball" to continue';
+            } else if (userIsBowling && !bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+            } else if (userIsBatting && bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Your turn to bat! Select a card';
+            } else if (userIsBatting && !bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Please wait for the computer to bowl';
+            } else if (userIsBowling && bowlerCardPlayed) {
+                actionTextDisplay.textContent = 'Please wait for the computer to bat';
+            }
+        }
+        
+        // Add an entry to the game log
+        function addLogEntry(text) {
+            const entryElement = document.createElement('div');
+            entryElement.className = 'log-entry';
+            entryElement.innerHTML = text;
+            
+            logEntriesDisplay.prepend(entryElement);
+        }
+        
+        // Update all displays with current game state
+        function updateDisplays() {
+            userRunsDisplay.textContent = userRuns;
+            userWicketsDisplay.textContent = userWickets;
+            compRunsDisplay.textContent = compRuns;
+            compWicketsDisplay.textContent = compWickets;
+            
+            // Get first innings data if exists
+            const firstInningsData = window.firstInningsData || null;
+            
+            // Calculate overs for display
+            let userOvers, compOvers;
+            
+            if (currentInnings === 1) {
+                // First innings in progress
+                if (userIsBatting) {
+                    userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    compOvers = '0.0';
+                } else {
+                    userOvers = '0.0';
+                    compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                }
+            } else {
+                // Second innings - use stored data for first innings
+                if (firstInningsData) {
+                    if (firstInningsData.team === 'user') {
+                        // User batted first
+                        userOvers = firstInningsData.overs;
+                        compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    } else {
+                        // Computer batted first
+                        compOvers = firstInningsData.overs;
+                        userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                } else {
+                    // Fallback if no stored data
+                    if (userIsBatting) {
+                        userOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                        compOvers = `${TOTAL_OVERS}.0`; // Assume completed
+                    } else {
+                        userOvers = `${TOTAL_OVERS}.0`; // Assume completed
+                        compOvers = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+                    }
+                }
+            }
+            
+            userOversDisplay.textContent = userOvers;
+            compOversDisplay.textContent = compOvers;
+            
+            // Update current over and ball display for current innings
+            const currentOver = `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}`;
+            currentOverDisplay.textContent = currentOver;
+            ballCountDisplay.textContent = balls;
+            
+            // Update deck count
+            const deckCountValue = document.getElementById('deck-count-value');
+            if (deckCountValue) {
+                deckCountValue.textContent = deck.length;
+            }
+            
+            // Update target and required runs if available
+            if (target) {
+                targetRunsDisplay.textContent = target;
+                
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const requiredRuns = Math.max(0, target - currentRuns);
+                
+                reqRunsDisplay.textContent = requiredRuns;
+                
+                // If game is in second innings, add info about required runs
+                if (currentInnings === 2) {
+                    const remainingBalls = (TOTAL_OVERS * BALLS_PER_OVER) - balls;
+                    const remainingWickets = TOTAL_WICKETS - (userIsBatting ? userWickets : compWickets);
+                    
+                    if (requiredRuns > 0) {
+                        resultDisplay.textContent = `${userIsBatting ? 'You need' : 'Computer needs'} ${requiredRuns} runs from ${remainingBalls} balls with ${remainingWickets} wickets remaining`;
+                    } else {
+                        resultDisplay.textContent = '';
+                    }
+                } else {
+                    resultDisplay.textContent = '';
+                }
+            } else {
+                targetRunsDisplay.textContent = '-';
+                reqRunsDisplay.textContent = '-';
+                resultDisplay.textContent = '';
+            }
+            
+            // Calculate and update run rate
+            if (balls > 0) {
+                const currentRuns = userIsBatting ? userRuns : compRuns;
+                const runRate = (currentRuns / balls) * 6;
+                runRateDisplay.textContent = runRate.toFixed(2);
+            } else {
+                runRateDisplay.textContent = '0.00';
+            }
+            
+            // Update action text based on waiting state
+            setActionText();
+        }
+        
+        // Reset the game to initial state
+        function resetGame() {
+            // Reset game state variables
+            userIsBatting = false;
+            userIsBowling = false;
+            currentInnings = 1;
+            userRuns = 0;
+            userWickets = 0;
+            compRuns = 0;
+            compWickets = 0;
+            balls = 0;
+            target = null;
+            bowlerCardPlayed = null;
+            batterCardPlayed = null;
+            gameOver = false;
+            waitingForNextBall = false;
+            cardRefreshCount = 0;
+            isCardRefreshTime = false;
+            
+            // Reset displays
+            resetCardDisplays();
+            resultDisplay.textContent = '';
+            outcomeArea.classList.add('hidden');
+            nextBallBtn.textContent = "Next Ball";
+            
+            // Hide all special displays
+            ballOutcomeDisplay.classList.add('hidden');
+            inningsSummaryDisplay.classList.add('hidden');
+            finalGameSummary.classList.add('hidden');
+            
+            // Clear log
+            logEntriesDisplay.innerHTML = '';
+            
+            // Hide game screen
+            gameScreen.classList.add('hidden');
+            
+            // Show start screen
+            startScreen.classList.remove('hidden');
+            
+            // Reset innings indicators
+            userInningsIndicator.classList.add('hidden');
+            compInningsIndicator.classList.add('hidden');
+            
+            // Re-shuffle the deck
+            shuffleDeck();
+            
+            // Update the display
+            updateDisplays();
+        }
+        
+        // Initialize the game when page loads
+        window.addEventListener('load', initGame);
+    </script>
+</body>
+</html>
