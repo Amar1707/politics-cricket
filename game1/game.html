@@ -924,7 +924,9 @@
                 actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
             } else {
                 // If computer is bowling first, computer plays a bowling card
-                computerPlaysBowlingCard();
+                setTimeout(() => {
+                    computerPlaysBowlingCard();
+                }, 500);
             }
             
             // Log game start
@@ -1081,6 +1083,35 @@
         // Computer plays a bowling card
         function computerPlaysBowlingCard() {
             if (gameOver || waitingForNextBall) return;
+            
+            console.log("Computer is playing a bowling card");
+            
+            // Safety check - make sure computer has cards
+            if (computerCards.length === 0) {
+                console.error("Computer has no cards!");
+                // Try to draw a new card from the deck
+                if (deck.length > 0) {
+                    computerCards.push(deck.shift());
+                } else {
+                    // If no cards left, create a default one
+                    computerCards.push({
+                        id: 999,
+                        name: "Default Computer Card",
+                        photo: "/api/placeholder/400/180?text=ComputerCard",
+                        age: 45,
+                        gender: 'MALE',
+                        party: 'BJP',
+                        vote_share: 35,
+                        rank: 2,
+                        constituency: "Default Constituency",
+                        state: "Default State",
+                        type: "GEN",
+                        turnout: 65,
+                        margin: 10,
+                        female_turnout_edge: 0
+                    });
+                }
+            }
             
             // Strategy: pick a card with high vote_share for bowling
             let bestIndex = 0;
@@ -2129,12 +2160,11 @@
             `;
         }
         
-        // Set action text based on current game state
         function setActionText() {
             if (isCardRefreshTime) {
                 actionTextDisplay.textContent = `Select a card to discard (${cardRefreshCount + 1}/2)`;
-            } else if (waitingForNextBall && nextBallBtn.textContent === "Start Second Innings") {
-                actionTextDisplay.textContent = 'Click "Start Second Innings" to continue';
+            } else if (waitingForNextBall && continueBtn.dataset.action === "startSecondInnings") {
+                actionTextDisplay.textContent = 'Click "Continue" below the scorecard to start second innings';
             } else if (waitingForNextBall && nextBallBtn.textContent === "Manage Cards") {
                 actionTextDisplay.textContent = 'Click "Manage Cards" to refresh your cards';
             } else if (waitingForNextBall && nextBallBtn.textContent === "Start Next Over") {
