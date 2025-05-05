@@ -1778,18 +1778,34 @@
             resultDisplay.textContent = `${winner} won the match!`;
             
             // Set final scorecard in the modal
-            const userOversPlayed = `${Math.floor((userIsBatting ? balls : 0) / BALLS_PER_OVER)}.${(userIsBatting ? balls : 0) % BALLS_PER_OVER}`;
-            const compOversPlayed = `${Math.floor((!userIsBatting ? balls : 0) / BALLS_PER_OVER)}.${(!userIsBatting ? balls : 0) % BALLS_PER_OVER}`;
+            let userOversPlayed, compOversPlayed;
             
-            // Calculate complete innings information
-            const userInningsComplete = userIsBatting ? false : (currentInnings === 2);
-            const compInningsComplete = !userIsBatting ? false : (currentInnings === 2);
+            if (currentInnings === 1) {
+                // First innings not complete
+                userOversPlayed = userIsBatting ? 
+                    `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                    '0.0';
+                compOversPlayed = !userIsBatting ? 
+                    `${Math.floor(balls / BALLS_PER_OVER)}.${balls % BALLS_PER_OVER}` : 
+                    '0.0';
+            } else {
+                // Both teams have batted
+                const firstInningsBalls = TOTAL_OVERS * BALLS_PER_OVER; // Assume first innings was completed
+                const secondInningsBalls = balls;
+                
+                if (userIsBatting) {
+                    // User is batting in second innings
+                    userOversPlayed = `${Math.floor(secondInningsBalls / BALLS_PER_OVER)}.${secondInningsBalls % BALLS_PER_OVER}`;
+                    compOversPlayed = `${TOTAL_OVERS}.0`; // Computer's innings was complete
+                } else {
+                    // Computer is batting in second innings
+                    userOversPlayed = `${TOTAL_OVERS}.0`; // User's innings was complete
+                    compOversPlayed = `${Math.floor(secondInningsBalls / BALLS_PER_OVER)}.${secondInningsBalls % BALLS_PER_OVER}`;
+                }
+            }
             
-            const userOvers = userInningsComplete ? `${TOTAL_OVERS}.0` : userOversPlayed;
-            const compOvers = compInningsComplete ? `${TOTAL_OVERS}.0` : compOversPlayed;
-            
-            finalUserScore.textContent = `${userRuns}/${userWickets} (${userOvers})`;
-            finalCompScore.textContent = `${compRuns}/${compWickets} (${compOvers})`;
+            finalUserScore.textContent = `${userRuns}/${userWickets} (${userOversPlayed})`;
+            finalCompScore.textContent = `${compRuns}/${compWickets} (${compOversPlayed})`;
             finalResult.textContent = winMessage;
             
             // Show modal with game result
@@ -1912,6 +1928,12 @@
         function setActionText() {
             if (isCardRefreshTime) {
                 actionTextDisplay.textContent = `Select a card to discard (${cardRefreshCount + 1}/2)`;
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Start Second Innings") {
+                actionTextDisplay.textContent = 'Click "Start Second Innings" to continue';
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Manage Cards") {
+                actionTextDisplay.textContent = 'Click "Manage Cards" to refresh your cards';
+            } else if (waitingForNextBall && nextBallBtn.textContent === "Start Next Over") {
+                actionTextDisplay.textContent = 'Click "Start Next Over" to continue';
             } else if (waitingForNextBall) {
                 actionTextDisplay.textContent = 'Click "Next Ball" to continue';
             } else if (userIsBowling && !bowlerCardPlayed) {
