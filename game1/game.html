@@ -1884,8 +1884,8 @@
             // Set game as over
             gameOver = true;
             
-            // Hide the outcome and innings summary areas
-            outcomeArea.classList.add('hidden');
+            // Keep the ball outcome visible, only hide innings summary area
+            // outcomeArea remains visible so players can see the final ball's outcome
             inningsSummaryArea.classList.add('hidden');
             
             // Determine the winner
@@ -1992,8 +1992,14 @@
             gameSummaryMessage.innerHTML = `
                 <p>${winMessage}</p>
                 <p>${winReason}</p>
+                <p style="margin-top: 15px;">The ball outcome above shows what happened on the final delivery.</p>
             `;
             gameSummaryArea.classList.remove('hidden');
+            
+            // Position the game summary below the ball outcome for better flow
+            if (!outcomeArea.classList.contains('hidden')) {
+                outcomeArea.after(gameSummaryArea);
+            }
             
             // Log the result
             addLogEntry(`<span class="log-highlight">GAME OVER!</span> ${winMessage} ${winReason}`);
