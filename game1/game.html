@@ -44,11 +44,160 @@
             margin-bottom: 30px;
             border-radius: var(--border-radius);
             box-shadow: var(--card-shadow);
+            position: relative;
         }
         
         header h1 {
             margin-bottom: 10px;
             font-size: 2.5rem;
+        }
+        
+        .rules-btn {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            background-color: var(--accent-color);
+            color: var(--light-text);
+            border: none;
+            padding: 8px 15px;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .rules-btn:hover {
+            background-color: #008c45;
+            transform: translateY(-2px);
+        }
+        
+        .rules-icon {
+            font-size: 1.2rem;
+        }
+        
+        /* Rules modal */
+        .rules-modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0,0,0,0.7);
+            display: none;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            overflow-y: auto;
+            padding: 20px;
+        }
+        
+        .rules-modal {
+            background-color: white;
+            border-radius: var(--border-radius);
+            max-width: 800px;
+            width: 90%;
+            max-height: 90vh;
+            overflow-y: auto;
+            padding: 30px;
+            position: relative;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3);
+            animation: modalFadeIn 0.3s;
+        }
+        
+        @keyframes modalFadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .rules-close {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--secondary-color);
+            transition: color 0.2s;
+        }
+        
+        .rules-close:hover {
+            color: var(--primary-color);
+        }
+        
+        .rules-title {
+            font-size: 2rem;
+            color: var(--primary-color);
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .rules-section {
+            margin-bottom: 25px;
+        }
+        
+        .rules-section-title {
+            font-size: 1.3rem;
+            color: var(--secondary-color);
+            margin-bottom: 10px;
+            border-bottom: 2px solid var(--accent-color);
+            padding-bottom: 5px;
+        }
+        
+        .rules-section p {
+            margin-bottom: 15px;
+            line-height: 1.6;
+        }
+        
+        .rules-highlight {
+            background-color: rgba(244, 114, 22, 0.1);
+            padding: 2px 5px;
+            border-radius: 3px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .rules-list {
+            margin-left: 25px;
+            margin-bottom: 15px;
+        }
+        
+        .rules-list li {
+            margin-bottom: 8px;
+        }
+        
+        .rules-note {
+            background-color: rgba(0, 165, 80, 0.1);
+            border-left: 4px solid var(--accent-color);
+            padding: 10px 15px;
+            margin: 15px 0;
+            border-radius: 5px;
+        }
+        
+        .rules-special {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .special-rule {
+            flex: 1;
+            min-width: 200px;
+            background-color: #f5f5f5;
+            padding: 10px;
+            border-radius: 5px;
+            border-left: 3px solid var(--secondary-color);
+        }
+        
+        .special-rule-title {
+            font-weight: bold;
+            color: var(--secondary-color);
+            margin-bottom: 5px;
         }
         
         .game-options {
@@ -566,7 +715,113 @@
         <header>
             <h1>Cricket Card Game - Lok Sabha Elections 2024</h1>
             <p>Use election candidate cards to play cricket!</p>
+            <button id="rules-btn" class="rules-btn"><span class="rules-icon">📋</span> Game Rules</button>
         </header>
+    </div>
+    
+    <!-- Rules Modal -->
+    <div id="rules-modal-overlay" class="rules-modal-overlay">
+        <div class="rules-modal">
+            <button id="rules-close" class="rules-close">×</button>
+            <h2 class="rules-title">Howzat! Cricket Card Game Rules</h2>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Game Concept</h3>
+                <p>Welcome to the <span class="rules-highlight">Cricket Card Game</span> - where Indian politics meets cricket! Use election candidate cards from the 2024 Lok Sabha Elections to play a thrilling cricket match against the computer.</p>
+                <p>Each candidate's electoral statistics determine their cricketing prowess. Your strategic card selection could be the difference between hitting a six or getting bowled out!</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">How to Play</h3>
+                <p>The game is simple: choose whether to <span class="rules-highlight">bat first</span> or <span class="rules-highlight">bowl first</span>. Each player gets 6 cards in hand.</p>
+                <p>For each ball:</p>
+                <ol class="rules-list">
+                    <li>The <strong>bowler</strong> plays a card first</li>
+                    <li>Then the <strong>batter</strong> responds with their card</li>
+                    <li>The outcome (runs or wicket) is determined by comparing the cards' stats</li>
+                </ol>
+                <div class="rules-note">
+                    Remember: Just like in real cricket, strategy matters! Save your high vote-share cards for bowling and use them wisely when batting.
+                </div>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Game Structure</h3>
+                <ul class="rules-list">
+                    <li>Two innings (you bat in one, bowl in the other)</li>
+                    <li>Each innings has a maximum of 6 overs (36 balls)</li>
+                    <li>Each team has 6 wickets</li>
+                    <li>After the first innings, a target score is set</li>
+                    <li>At the end of each over (except the last), the bowling team can refresh cards twice</li>
+                </ul>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Card Mechanics</h3>
+                <p><strong>Wicket Rule:</strong> If the batter's vote share is <em>lower</em> than the bowler's, it's a <span class="rules-highlight">WICKET!</span> (Exception: Rank 1 candidates can never be dismissed!)</p>
+                
+                <p><strong>Run Scoring:</strong> If the batter's vote share is higher than the bowler's, runs are scored based on the difference:</p>
+                <ul class="rules-list">
+                    <li>0-3% difference: 0 runs</li>
+                    <li>3-6% difference: 1 run</li>
+                    <li>6-9% difference: 2 runs</li>
+                    <li>9-12% difference: 3 runs</li>
+                    <li>12-15% difference: 4 runs</li>
+                    <li>15%+ difference: 6 runs!</li>
+                </ul>
+                <p>If the batter's vote share is lower than the bowler's but the batter is a Rank 1 candidate, they won't be dismissed, but will score 0 runs.</p>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Special Rules</h3>
+                <p>These special advantages override normal run scoring (even if the batter would score runs):</p>
+                
+                <div class="rules-special">
+                    <div class="special-rule">
+                        <div class="special-rule-title">Party Unity</div>
+                        <p>If both cards belong to the same party, 0 runs are scored.</p>
+                    </div>
+                    
+                    <div class="special-rule">
+                        <div class="special-rule-title">Gender Advantage</div>
+                        <p>Female bowlers cause non-female batters to score 0 runs.</p>
+                    </div>
+                    
+                    <div class="special-rule">
+                        <div class="special-rule-title">Caste Advantage</div>
+                        <p>SC bowlers cause non-SC batters to score 0 runs.</p>
+                    </div>
+                    
+                    <div class="special-rule">
+                        <div class="special-rule-title">Tribal Advantage</div>
+                        <p>ST bowlers cause non-ST batters to score 0 runs.</p>
+                    </div>
+                </div>
+                
+                <div class="rules-note">
+                    <strong>Important:</strong> Special rules only apply if the batter's vote share is higher than or equal to the bowler's. If the batter's vote share is lower, it's always 0 runs (or a wicket, if not a Rank 1 candidate).
+                </div>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Winning the Game</h3>
+                <p>In the second innings, the team batting needs to score more runs than the first innings total to win.</p>
+                <p>The game ends when:</p>
+                <ul class="rules-list">
+                    <li>The batting team in the second innings scores more runs than the target (they win)</li>
+                    <li>The batting team loses all their wickets (the bowling team wins)</li>
+                    <li>All overs are completed (the team with more runs wins)</li>
+                </ul>
+            </div>
+            
+            <div class="rules-section">
+                <h3 class="rules-section-title">Have Fun!</h3>
+                <p>This unique blend of cricket and politics creates surprising and fun outcomes. Every election statistic matters in this game - just like in real elections!</p>
+                <div class="rules-note">
+                    May the best political cricket team win! 🏏🗳️
+                </div>
+            </div>
+        </div>
     </div>
         
         <div id="start-screen">
@@ -2300,6 +2555,39 @@
         
         // Initialize the game when page loads
         window.addEventListener('load', initGame);
+        
+        // Rules modal functionality
+        const rulesBtn = document.getElementById('rules-btn');
+        const rulesModalOverlay = document.getElementById('rules-modal-overlay');
+        const rulesClose = document.getElementById('rules-close');
+        
+        // Open rules modal
+        rulesBtn.addEventListener('click', () => {
+            rulesModalOverlay.style.display = 'flex';
+            document.body.style.overflow = 'hidden'; // Prevent scrolling behind modal
+        });
+        
+        // Close rules modal
+        rulesClose.addEventListener('click', () => {
+            rulesModalOverlay.style.display = 'none';
+            document.body.style.overflow = ''; // Restore scrolling
+        });
+        
+        // Close modal when clicking outside
+        rulesModalOverlay.addEventListener('click', (e) => {
+            if (e.target === rulesModalOverlay) {
+                rulesModalOverlay.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
+        
+        // Close modal with Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && rulesModalOverlay.style.display === 'flex') {
+                rulesModalOverlay.style.display = 'none';
+                document.body.style.overflow = ''; // Restore scrolling
+            }
+        });
     </script>
 </body>
 </html>
