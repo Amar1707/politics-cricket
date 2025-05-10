@@ -9,10 +9,24 @@
  */
 export async function loadCards() {
     try {
-        const response = await fetch('data/cards.json');
-        if (!response.ok) {
-            throw new Error('Failed to load cards');
+        // Try multiple paths to find the cards.json file
+        let response;
+        const possiblePaths = ['./data/cards.json', './cards.json', '../cards.json', '/cards.json'];
+        
+        for (const path of possiblePaths) {
+            try {
+                response = await fetch(path);
+                if (response.ok) break;
+            } catch (e) {
+                console.warn(`Failed to load cards from ${path}`);
+            }
         }
+        
+        // If no path worked, throw error to trigger sample cards
+        if (!response || !response.ok) {
+            throw new Error('Failed to load cards from any path');
+        }
+        
         return await response.json();
     } catch (error) {
         console.error('Error loading cards:', error);
