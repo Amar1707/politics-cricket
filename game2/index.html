@@ -4,7 +4,15 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cricket Election Card Game</title>
-    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="./css/styles.css">
+    
+    <!-- Fix for module loading - ensures proper MIME types -->
+    <script>
+        // Check for module support
+        if (!'noModule' in HTMLScriptElement.prototype) {
+            alert('Your browser does not support JavaScript modules. Please use a modern browser.');
+        }
+    </script>
 </head>
 <body>
     <div class="container">
@@ -92,6 +100,14 @@
     </div>
     
     <!-- Load modules -->
-    <script type="module" src="js/main.js"></script>
+    <script type="module" src="./js/main.js"></script>
+    
+    <!-- Fallback for browsers that don't support modules -->
+    <script nomodule>
+        document.body.innerHTML = '<div style="text-align: center; margin-top: 50px; font-family: sans-serif;">' +
+            '<h1>Browser Not Supported</h1>' +
+            '<p>Please use a modern browser like Chrome, Firefox, Safari, or Edge.</p>' +
+            '</div>';
+    </script>
 </body>
 </html>
