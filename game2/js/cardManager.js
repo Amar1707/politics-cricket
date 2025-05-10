@@ -11,14 +11,20 @@ export async function loadCards() {
     try {
         // Try multiple paths to find the cards.json file
         let response;
-        const possiblePaths = ['./data/cards.json', './cards.json', '../cards.json', '/cards.json'];
+        const possiblePaths = ['./cards.json', '/cards.json', '../cards.json', 'cards.json', './data/cards.json', '/data/cards.json'];
+        
+        console.log("Attempting to load cards from multiple possible paths...");
         
         for (const path of possiblePaths) {
             try {
+                console.log(`Trying to load cards from: ${path}`);
                 response = await fetch(path);
-                if (response.ok) break;
+                if (response.ok) {
+                    console.log(`Successfully loaded cards from: ${path}`);
+                    break;
+                }
             } catch (e) {
-                console.warn(`Failed to load cards from ${path}`);
+                console.warn(`Failed to load cards from ${path}: ${e.message}`);
             }
         }
         
@@ -27,8 +33,18 @@ export async function loadCards() {
             throw new Error('Failed to load cards from any path');
         }
         
-        return await response.json();
+        const cards = await response.json();
+        console.log("Cards loaded successfully:", Object.keys(cards).length);
+        return cards;
     } catch (error) {
+        console.error('Error loading cards:', error);
+        document.getElementById('game-status').textContent = 
+            'Error loading cards. Using sample cards instead.';
+        
+        // For demonstration/testing, create some sample cards
+        return createSampleCards();
+    }
+}
         console.error('Error loading cards:', error);
         document.getElementById('game-status').textContent = 
             'Error loading cards. Using sample cards instead.';
