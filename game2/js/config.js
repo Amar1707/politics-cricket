@@ -19,8 +19,5 @@ const CONFIG = {
     ],
     
     // Card data file path
-    CARDS_JSON_PATH: 'data/cards.json',
-    
-    // Default card image placeholder (fallback if an image fails to load)
-    DEFAULT_PLACEHOLDER: 'https://results.eci.gov.in/uploads4/candprofile/2024/PC/E24/S24/NAREN-2024-12699.jpg'
+    CARDS_JSON_PATH: 'data/cards.json'
 };
