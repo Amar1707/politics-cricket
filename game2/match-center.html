@@ -1,0 +1,119 @@
+<!-- Match Center -->
+<div class="match-center">
+    <!-- Scoreboard Banner -->
+    <div class="scoreboard-banner">
+        <div class="team team-user">
+            <div class="team-name">You</div>
+            <div class="team-score"><span id="user-runs">0</span>/<span id="user-wickets">0</span></div>
+            <div class="team-overs">(<span id="user-overs">0.0</span>)</div>
+            <div id="user-innings-indicator" class="innings-active hidden">Batting</div>
+        </div>
+        <div class="match-status">
+            <div class="match-info" id="match-info">1st Innings</div>
+            <div class="target-info" id="target-info">Target: <span id="target-display">-</span></div>
+        </div>
+        <div class="team team-comp">
+            <div class="team-name">Computer</div>
+            <div class="team-score"><span id="comp-runs">0</span>/<span id="comp-wickets">0</span></div>
+            <div class="team-overs">(<span id="comp-overs">0.0</span>)</div>
+            <div id="comp-innings-indicator" class="innings-active hidden">Batting</div>
+        </div>
+    </div>
+
+    <!-- Current Ball Status Bar -->
+    <div class="current-status">
+        <div class="status-item">
+            <div class="status-label">Over</div>
+            <div class="status-value" id="current-over">0.0</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">Required</div>
+            <div class="status-value" id="req-runs">-</div>
+        </div>
+        <div class="status-item">
+            <div class="status-label">Run Rate</div>
+            <div class="status-value" id="run-rate">0.00</div>
+        </div>
+        <div class="status-item hidden" id="last-ball-container">
+            <div class="status-label">Last Ball</div>
+            <div class="status-value last-ball" id="last-ball">-</div>
+        </div>
+    </div>
+
+    <!-- Dynamic Content Area -->
+    <div class="dynamic-content" id="dynamic-content">
+        <!-- This section will show different content based on game state -->
+        
+        <!-- Default View: Commentary -->
+        <div id="commentary-view" class="view-section">
+            <div class="view-header">
+                <div class="view-title">Match Commentary</div>
+                <div class="view-controls">
+                    <button id="toggle-commentary" class="view-control-btn">Minimize</button>
+                </div>
+            </div>
+            <div class="commentary-list" id="log-entries">
+                <!-- Commentary entries will be added here -->
+                <div class="commentary-item">Game ready to begin. Choose your strategy!</div>
+            </div>
+        </div>
+        
+        <!-- Ball Outcome View -->
+        <div id="ball-outcome-view" class="view-section hidden">
+            <div class="view-header outcome-header">
+                <div class="view-title">Ball Outcome</div>
+            </div>
+            <div class="outcome-content">
+                <div class="outcome-result" id="outcome-result">4 RUNS!</div>
+                <div class="outcome-description" id="outcome-description">
+                    Great shot! The batter's vote share was significantly higher than the bowler's.
+                </div>
+                <button id="next-ball-btn" class="action-button">Next Ball</button>
+            </div>
+        </div>
+        
+        <!-- Innings Summary View -->
+        <div id="innings-summary-view" class="view-section hidden">
+            <div class="view-header summary-header">
+                <div class="view-title">Innings Summary</div>
+            </div>
+            <div class="summary-content" id="innings-summary-content">
+                <!-- Innings summary content goes here -->
+            </div>
+            <button id="continue-innings-btn" class="action-button">Continue</button>
+        </div>
+        
+        <!-- Game Summary View -->
+        <div id="game-summary-view" class="view-section hidden">
+            <div class="view-header summary-header">
+                <div class="view-title">Match Result</div>
+            </div>
+            <div class="summary-content">
+                <div class="result-headline" id="result-headline">You won by 25 runs!</div>
+                <div class="final-scorecard">
+                    <div class="final-score-row">
+                        <div class="final-score-team">Your Score:</div>
+                        <div class="final-score-value" id="final-user-score">156/4 (6.0)</div>
+                    </div>
+                    <div class="final-score-row">
+                        <div class="final-score-team">Computer Score:</div>
+                        <div class="final-score-value" id="final-comp-score">131/6 (6.0)</div>
+                    </div>
+                </div>
+                <div class="result-description" id="result-description">
+                    You successfully defended your total!
+                </div>
+                <button id="new-game-btn" class="action-button">New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Over Summary Strip (shown after each over) -->
+    <div id="over-summary" class="over-summary hidden">
+        <div class="over-number">End of Over <span id="over-number">1</span></div>
+        <div class="over-stats">
+            <div class="over-runs"><span id="over-runs">8</span> runs</div>
+            <div class="over-wickets"><span id="over-wickets">1</span> wicket</div>
+        </div>
+    </div>
+</div>
