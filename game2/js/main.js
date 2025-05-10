@@ -6,6 +6,10 @@ window.addEventListener('load', async () => {
     // Initialize modules
     await Game.init();
     Rules.init();
+    UI.init();
+    
+    // Initialize Match Center after UI is ready
+    UI.initMatchCenter();
     
     console.log('Cricket Card Game initialized!');
 });
