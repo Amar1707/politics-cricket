@@ -5,6 +5,7 @@
 import { GameState } from './gameState.js';
 import { loadCards } from './cardManager.js';
 import { setupEventListeners } from './eventHandlers.js';
+import { updateUI, updateScoreboard } from './uiController.js';
 
 // Global game state that will be accessible to all modules
 let gameState;
