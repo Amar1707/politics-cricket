@@ -21,6 +21,6 @@ const CONFIG = {
     // Card data file path
     CARDS_JSON_PATH: 'data/cards.json',
     
-    // Default card image placeholder
-    PLACEHOLDER_IMAGE: 'images/placeholder.jpg'
+    // Default card image placeholder (fallback if an image fails to load)
+    DEFAULT_PLACEHOLDER: 'https://via.placeholder.com/400x180?text=Candidate'
 };
