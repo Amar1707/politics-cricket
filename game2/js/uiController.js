@@ -141,27 +141,33 @@ function renderHand(element, hand, player, gameState) {
 export function createCardHTML(cardData, isInHand) {
     if (!cardData) return '';
     
+    // Safely access properties with fallbacks to avoid undefined errors
+    const votersFormatted = cardData.voters ? cardData.voters.toLocaleString() : '0';
+    const partyValue = cardData.party || 'Unknown';
+    const typeValue = cardData.type || '';
+    const categoryValue = cardData.category || '';
+    
     return `
         <div class="card-inner">
             <div class="card-content card-front">
                 <div class="card-header">
-                    <span class="card-name">${cardData.name}</span>
+                    <span class="card-name">${cardData.name || 'Unknown Candidate'}</span>
                 </div>
                 
-                <img class="card-photo" src="${cardData.photo}" onerror="this.src='/api/placeholder/250/120'" alt="${cardData.name}">
+                <img class="card-photo" src="${cardData.photo || ''}" onerror="this.src='/api/placeholder/250/120'" alt="${cardData.name || 'Candidate'}">
                 
                 <div class="card-details">
                     <div class="detail-row">
                         <span class="detail-label">Age:</span>
-                        <span class="detail-value">${cardData.age}</span>
+                        <span class="detail-value">${cardData.age || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Gender:</span>
-                        <span class="detail-value">${cardData.gender}</span>
+                        <span class="detail-value">${cardData.gender || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Party:</span>
-                        <span class="detail-value">${cardData.party}</span>
+                        <span class="detail-value">${partyValue}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Incumbent:</span>
@@ -173,61 +179,61 @@ export function createCardHTML(cardData, isInHand) {
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Vote Share:</span>
-                        <span class="detail-value">${cardData.vote_share}%</span>
+                        <span class="detail-value">${cardData.vote_share || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Rank:</span>
-                        <span class="detail-value">${cardData.rank}</span>
+                        <span class="detail-value">${cardData.rank || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Constituency:</span>
-                        <span class="detail-value">${cardData.constituency}</span>
+                        <span class="detail-value">${cardData.constituency || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">State:</span>
-                        <span class="detail-value">${cardData.state}</span>
+                        <span class="detail-value">${cardData.state || 'N/A'}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Type:</span>
-                        <span class="detail-value">${cardData.type || ''}</span>
+                        <span class="detail-value">${typeValue}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Category:</span>
-                        <span class="detail-value">${cardData.category || ''}</span>
+                        <span class="detail-value">${categoryValue}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Voters:</span>
-                        <span class="detail-value">${cardData.voters.toLocaleString()}</span>
+                        <span class="detail-value">${votersFormatted}</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Turnout:</span>
-                        <span class="detail-value">${cardData.turnout}%</span>
+                        <span class="detail-value">${cardData.turnout || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Male Turnout:</span>
-                        <span class="detail-value">${cardData.male_turnout}%</span>
+                        <span class="detail-value">${cardData.male_turnout || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Female Turnout:</span>
-                        <span class="detail-value">${cardData.female_turnout}%</span>
+                        <span class="detail-value">${cardData.female_turnout || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Winner Share:</span>
-                        <span class="detail-value">${cardData.winner_share}%</span>
+                        <span class="detail-value">${cardData.winner_share || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">Margin:</span>
-                        <span class="detail-value">${cardData.margin}%</span>
+                        <span class="detail-value">${cardData.margin || 0}%</span>
                     </div>
                     <div class="detail-row">
                         <span class="detail-label">NOTA Share:</span>
-                        <span class="detail-value">${cardData.nota_share}%</span>
+                        <span class="detail-value">${cardData.nota_share || 0}%</span>
                     </div>
                 </div>
                 
                 <div class="card-footer">
-                    <span>${cardData.constituency}</span>
-                    <span>${cardData.state}</span>
+                    <span>${cardData.constituency || 'Unknown'}</span>
+                    <span>${cardData.state || 'Unknown'}</span>
                 </div>
             </div>
         </div>
