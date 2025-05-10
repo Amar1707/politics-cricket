@@ -54,6 +54,7 @@ function createSampleCards() {
         const voteShare = Math.round((25 + Math.random() * 40) * 100) / 100;
         const margin = Math.round((0.5 + Math.random() * 15) * 100) / 100;
         
+        // Make sure all properties are explicitly initialized
         sampleCards[i] = {
             id: i,
             name: `CANDIDATE ${i}`,
@@ -79,5 +80,6 @@ function createSampleCards() {
         };
     }
     
+    console.log("Sample cards created:", sampleCards);
     return sampleCards;
 }
