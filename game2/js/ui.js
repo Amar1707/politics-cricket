@@ -48,9 +48,9 @@ const UI = {
         // Setup event listeners
         this.elements.batFirstBtn.addEventListener('click', () => Game.startGame(true));
         this.elements.bowlFirstBtn.addEventListener('click', () => Game.startGame(false));
-        this.elements.resetBtn.addEventListener('click', Game.resetGame);
-        this.elements.nextBallBtn.addEventListener('click', Game.prepareNextBall);
-        this.elements.continueInningsBtn.addEventListener('click', Game.handleContinueInnings);
+        this.elements.resetBtn.addEventListener('click', () => Game.resetGame());
+        this.elements.nextBallBtn.addEventListener('click', () => Game.prepareNextBall());
+        this.elements.continueInningsBtn.addEventListener('click', () => Game.handleContinueInnings());
     },
     
     /**
