@@ -6,6 +6,7 @@
     <title>Cricket Card Game - Lok Sabha Elections 2024</title>
     <link rel="stylesheet" href="css/main.css">
     <link rel="stylesheet" href="css/modal.css">
+    <link rel="stylesheet" href="css/match-center.css">
 </head>
 <body>
     <div class="container">
@@ -136,70 +137,10 @@
             </div>
             
             <div class="game-area">
-                <div class="scoreboard">
-                    <div class="score-section">
-                        <h2>Your Score</h2>
-                        <p class="score-detail">Runs: <span id="user-runs">0</span>/<span id="user-wickets">0</span></p>
-                        <p class="score-detail">Overs: <span id="user-overs">0.0</span></p>
-                        <p id="user-innings-indicator" class="current-innings hidden">Batting Now</p>
-                    </div>
-                    <div class="score-section">
-                        <h2>Target</h2>
-                        <p class="score-detail"><span id="target-runs">-</span></p>
-                    </div>
-                    <div class="score-section">
-                        <h2>Computer Score</h2>
-                        <p class="score-detail">Runs: <span id="comp-runs">0</span>/<span id="comp-wickets">0</span></p>
-                        <p class="score-detail">Overs: <span id="comp-overs">0.0</span></p>
-                        <p id="comp-innings-indicator" class="current-innings hidden">Batting Now</p>
-                    </div>
-                </div>
+                <!-- Match Center - Main reporting component -->
+                <div id="match-center-container"></div>
                 
-                <div class="match-stats">
-                    <div class="stat-box">
-                        <div class="stat-title">Over</div>
-                        <div id="current-over" class="stat-value">0.0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title">Ball</div>
-                        <div id="ball-count" class="stat-value">0</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title">Required</div>
-                        <div id="req-runs" class="stat-value">-</div>
-                    </div>
-                    <div class="stat-box">
-                        <div class="stat-title">Run Rate</div>
-                        <div id="run-rate" class="stat-value">0.00</div>
-                    </div>
-                </div>
-                
-                <!-- Game summary area that replaces the modal -->
-                <div id="game-summary-area" class="game-summary-area hidden">
-                    <h2 class="game-summary-title">Game Over!</h2>
-                    <p id="game-summary-message" class="game-summary-message">The match has ended.</p>
-                    
-                    <div class="final-scoreboard">
-                        <div class="final-score-title">Final Scorecard</div>
-                        <div class="final-score-row">
-                            <span class="final-score-label">Your Score:</span>
-                            <span id="final-user-score">0/0 (0.0)</span>
-                        </div>
-                        <div class="final-score-row">
-                            <span class="final-score-label">Computer Score:</span>
-                            <span id="final-comp-score">0/0 (0.0)</span>
-                        </div>
-                        <div class="final-score-row">
-                            <span class="final-score-label">Result:</span>
-                            <span id="final-result">-</span>
-                        </div>
-                    </div>
-                </div>
-                
-                <div id="ball-result-display" class="hidden">
-                    <div id="ball-result" class="ball-result">4 RUNS!</div>
-                </div>
-                
+                <!-- Game Board - Cards and Player Actions -->
                 <div class="board">
                     <div class="play-area">
                         <div class="card-played">
@@ -310,23 +251,8 @@
                             </div>
                         </div>
                     </div>
-                    
-                    <!-- Ball outcome area (exclusively for ball outcomes) -->
-                    <div id="outcome-area" class="outcome-area hidden">
-                        <div class="outcome-title">Ball Outcome</div>
-                        <div id="outcome-message" class="outcome-message">4 RUNS!</div>
-                        <button id="next-ball-btn" class="next-ball-btn">Next Ball</button>
-                    </div>
-                    
-                    <!-- New dedicated innings summary area -->
-                    <div id="innings-summary-area" class="innings-summary-area hidden">
-                        <div class="innings-summary-title">Innings Summary</div>
-                        <div id="innings-summary-message" class="innings-summary-message"></div>
-                        <button id="continue-innings-btn" class="next-ball-btn">Continue</button>
-                    </div>
-                    
-                    <div class="result-highlight" id="result-display"></div>
-                    
+
+                    <!-- Action Area -->
                     <div class="action-area">
                         <div class="card-selection">
                             <div>
@@ -336,22 +262,19 @@
                         </div>
                     </div>
                 </div>
-                
-                <div class="game-log">
-                    <div class="log-title">Match Commentary</div>
-                    <div id="log-entries"></div>
-                </div>
             </div>
         </div>
     </div>
 
     <!-- Scripts -->
+    <script src="js/loader.js"></script>
     <script src="js/config.js"></script>
     <script src="js/utils.js"></script>
     <script src="js/ui.js"></script>
     <script src="js/cards.js"></script>
     <script src="js/game.js"></script>
     <script src="js/rules.js"></script>
+    <script src="js/match-center.js"></script>
     <script src="js/main.js"></script>
 </body>
 </html>
