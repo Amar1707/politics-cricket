@@ -1,36 +1,37 @@
 /**
-     * Prepare for card refresh at the end of an over
-     * @param {number} overNumber - Current over number
-     * @param {boolean} userIsBowling - Whether the user is bowling
+     * Show card refresh interface
+     * @param {number} refreshCount - Current refresh count (1 or 2)
      */
-    prepareCardRefresh: function(overNumber, userIsBowling) {
-        // Add card refresh controls to ball outcome
-        const refreshMessage = `
-            <p style="margin-top: 15px;"><strong>End of over ${overNumber}.</strong></p>
-            <p>${userIsBowling ? 'You' : 'Computer'} can refresh cards twice.</p>
-        `;
+    showCardRefreshInterface: function(refreshCount) {
+        // Update the ball outcome view to show card refresh
+        this.elements.outcomeResult.textContent = `Card Refresh (${refreshCount}/2)`;
+        this.elements.outcomeDescription.textContent = `Select a card to discard and draw a new one`;
         
-        // Update outcome message if it's showing
-        if (this.views.ballOutcome && !this.views.ballOutcome.classList.contains('hidden')) {
-            const outcomeDescription = this.elements.outcomeDescription;
-            outcomeDescription.innerHTML += refreshMessage;
-            
-            // Update button text
-            if (this.elements.nextBallBtn) {
-                this.elements.nextBallBtn.textContent = "Manage Cards";
-            }
-        } else {
-            // Otherwise, show a new ball outcome with this message
-            this.showBallOutcome(
-                "End of Over",
-                refreshMessage,
-                false,
-                0
-            );
-            
-            // Update button text
-            if (this.elements.nextBallBtn) {
-                this.elements.nextBallBtn.textContent = "Manage Cards";
-            }
+        // Show the outcome view if not visible
+        this.showView('ballOutcome');
+        
+        // Update next ball button text
+        if (this.elements.nextBallBtn) {
+            this.elements.nextBallBtn.textContent = "Continue";
+        }
+    },
+    
+    /**
+     * Show the result of a card refresh
+     * @param {string} title - Title for the refresh result
+     * @param {string} message - Message describing the refresh
+     * @param {string} buttonText - Text for the button
+     */
+    showRefreshResult: function(title, message, buttonText) {
+        // Update the ball outcome view to show refresh result
+        this.elements.outcomeResult.textContent = title;
+        this.elements.outcomeDescription.innerHTML = message;
+        
+        // Show the outcome view if not visible
+        this.showView('ballOutcome');
+        
+        // Update next ball button text
+        if (this.elements.nextBallBtn) {
+            this.elements.nextBallBtn.textContent = buttonText;
         }
     },
