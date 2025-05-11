@@ -74,13 +74,15 @@ const Game = {
         if (this.state.userIsBowling) {
             // If user is bowling first, wait for user to select a bowling card
             UI.elements.actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
+            // Make sure player cards are visible
+            Cards.renderPlayerCards();
         } else {
             // If computer is bowling first, computer plays a bowling card
             this.computerPlaysBowlingCard();
         }
         
         // Log game start
-        Utils.addLogEntry(`<span class="log-highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
+        Utils.addLogEntry(`<span class="highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
     },
     
     /**
