@@ -264,7 +264,7 @@ const UI = {
     resetCardDisplays: function() {
         const defaultCardHTML = `
             <div class="card-header">Select a card to start</div>
-            <img src="${CONFIG.PLACEHOLDER_IMAGE}" alt="Candidate Photo" class="player-image">
+            <img src="https://via.placeholder.com/400x180?text=Select+a+Card" alt="Candidate Photo" class="player-image">
             <div class="card-body">
                 <div class="card-info">
                     <span class="info-label">Party:</span>
