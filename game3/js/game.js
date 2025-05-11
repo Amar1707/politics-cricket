@@ -50,7 +50,6 @@ const Game = {
         // Set game mode
         this.state.userIsBatting = userBatsFirst;
         this.state.userIsBowling = !userBatsFirst;
-        this.state.currentInnings = 1; // Explicitly set to first innings
         
         // Show current innings indicator
         if (this.state.userIsBatting) {
@@ -68,19 +67,20 @@ const Game = {
         // Set initial game state
         UI.updateDisplays();
         
-        // Update action text for player's initial action
+        // Set action text based on who's batting/bowling
+        UI.setActionText();
+        
+        // The bowler always plays first for each ball
         if (this.state.userIsBowling) {
             // If user is bowling first, wait for user to select a bowling card
             UI.elements.actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
         } else {
-            // If user is batting first, wait for computer to bowl
-            UI.elements.actionTextDisplay.textContent = 'Please wait for the computer to bowl';
             // If computer is bowling first, computer plays a bowling card
             this.computerPlaysBowlingCard();
         }
         
         // Log game start
-        Utils.addLogEntry(`<span class="highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
+        Utils.addLogEntry(`<span class="log-highlight">Game started!</span> ${userBatsFirst ? 'You' : 'Computer'} is batting first.`);
     },
     
     /**
