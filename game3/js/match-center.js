@@ -52,6 +52,10 @@ const MatchCenter = {
             // Keep the log scrolled to the top (newest entries)
             logEntriesContainer.scrollTop = 0;
         });
+        
+        // Make sure innings indicators are hidden initially
+        document.getElementById('user-innings-indicator').classList.add('hidden');
+        document.getElementById('comp-innings-indicator').classList.add('hidden');
     },
     
     /**
@@ -110,6 +114,9 @@ const MatchCenter = {
      * @param {object} gameState - Current game state
      */
     updateMatchCenter: function(gameState) {
+        // Update innings indicators
+        this.updateInningsIndicators(gameState);
+        
         // Update basic match information
         this.updateMatchInfo(gameState);
         
@@ -132,6 +139,24 @@ const MatchCenter = {
             } else if (gameState.lastBallRuns === 6) {
                 document.getElementById('last-ball').classList.add('six-text');
             }
+        }
+    },
+    
+    /**
+     * Update the innings indicators
+     * @param {object} gameState - Current game state
+     */
+    updateInningsIndicators: function(gameState) {
+        const userInningsIndicator = document.getElementById('user-innings-indicator');
+        const compInningsIndicator = document.getElementById('comp-innings-indicator');
+        
+        // Make sure only the batting team shows the indicator
+        if (gameState.userIsBatting) {
+            userInningsIndicator.classList.remove('hidden');
+            compInningsIndicator.classList.add('hidden');
+        } else {
+            userInningsIndicator.classList.add('hidden');
+            compInningsIndicator.classList.remove('hidden');
         }
     },
     
