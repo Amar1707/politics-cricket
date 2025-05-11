@@ -49,8 +49,9 @@
     margin-top: 5px;
 }
 
+/* Important: Make sure innings indicators are properly hidden */
 .innings-indicator.hidden {
-    display: none;
+    display: none !important;
 }
 
 .match-status {
@@ -286,7 +287,7 @@
 }
 
 .innings-details.hidden {
-    display: none;
+    display: none !important;
 }
 
 .scorecard-header {
@@ -377,6 +378,14 @@
     font-weight: bold;
 }
 
+/* Player cards section - added to ensure visibility */
+#player-cards {
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 15px;
+    justify-content: center;
+}
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
     .match-center-header {
@@ -398,7 +407,14 @@
     }
 }
 
-/* Add styles for hidden elements */
+/* Ensure all hidden elements are properly hidden */
 .hidden {
+    display: none !important;
+}
+
+/* Override for ball outcome, innings summary and game summary */
+#ball-outcome.hidden, 
+#innings-summary.hidden, 
+#game-summary.hidden {
     display: none !important;
 }
