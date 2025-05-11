@@ -51,6 +51,9 @@ const Cards = {
         const playerCardsDisplay = document.getElementById('player-cards');
         playerCardsDisplay.innerHTML = '';
         
+        // Always make cards visible by adding this style
+        playerCardsDisplay.style.display = 'flex';
+        
         this.playerCards.forEach((card, index) => {
             const cardElement = document.createElement('div');
             cardElement.className = 'player-card';
@@ -122,6 +125,9 @@ const Cards = {
     renderCardsForRefresh: function() {
         const playerCardsDisplay = document.getElementById('player-cards');
         playerCardsDisplay.innerHTML = '';
+        
+        // Always make cards visible by adding this style
+        playerCardsDisplay.style.display = 'flex';
         
         this.playerCards.forEach((card, index) => {
             const cardElement = document.createElement('div');
