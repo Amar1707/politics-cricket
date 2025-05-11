@@ -107,10 +107,8 @@ const Cards = {
                 </div>
             `;
             
-            // Enable card selection if the game is in a valid state for selection
+            // Only enable card selection if not waiting for next ball
             if (!Game.state.waitingForNextBall) {
-                // Add clear visual indicator that the card is selectable
-                cardElement.classList.add('selectable-card');
                 cardElement.addEventListener('click', () => Game.playerSelectsCard(index));
             }
             
