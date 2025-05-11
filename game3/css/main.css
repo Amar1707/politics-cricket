@@ -314,6 +314,27 @@ button:disabled {
     box-shadow: 0 8px 16px rgba(0,0,0,0.2);
 }
 
+/* Add styling for selectable cards */
+.selectable-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.selectable-card::after {
+    content: "Click to select";
+    position: absolute;
+    bottom: 5px;
+    left: 0;
+    right: 0;
+    background-color: var(--accent-color);
+    color: white;
+    text-align: center;
+    padding: 3px;
+    font-size: 0.7rem;
+    font-weight: bold;
+    opacity: 0.9;
+}
+
 .mini-card-header {
     background-color: var(--primary-color);
     color: white;
