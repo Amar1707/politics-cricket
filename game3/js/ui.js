@@ -79,6 +79,9 @@ const UI = {
         this.elements.compRunsDisplay.textContent = gameState.compRuns;
         this.elements.compWicketsDisplay.textContent = gameState.compWickets;
         
+        // Make sure player cards are visible, addressing the "hand not visible" issue
+        Cards.renderPlayerCards();
+        
         // Calculate overs for display
         let userOvers, compOvers;
         
