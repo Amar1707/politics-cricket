@@ -49,6 +49,10 @@
     margin-top: 5px;
 }
 
+.innings-indicator.hidden {
+    display: none;
+}
+
 .match-status {
     text-align: center;
     flex: 1;
@@ -99,6 +103,18 @@
 .info-value {
     font-weight: bold;
     font-size: 1.1rem;
+}
+
+.wicket-text {
+    color: #d9534f;
+}
+
+.four-text {
+    color: #5bc0de;
+}
+
+.six-text {
+    color: #5cb85c;
 }
 
 .last-ball-info {
@@ -380,4 +396,9 @@
         font-size: 0.9rem;
         padding: 10px 5px;
     }
+}
+
+/* Add styles for hidden elements */
+.hidden {
+    display: none !important;
 }
