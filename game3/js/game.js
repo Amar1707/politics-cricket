@@ -51,31 +51,32 @@ const Game = {
         this.state.userIsBatting = userBatsFirst;
         this.state.userIsBowling = !userBatsFirst;
         
-        // Show current innings indicator
-        if (this.state.userIsBatting) {
-            UI.elements.userInningsIndicator.classList.remove('hidden');
-            UI.elements.compInningsIndicator.classList.add('hidden');
+        // Explicitly set innings indicators
+        const userIndicator = document.getElementById('user-innings-indicator');
+        const compIndicator = document.getElementById('comp-innings-indicator');
+        
+        if (userBatsFirst) {
+            userIndicator.classList.remove('hidden');
+            compIndicator.classList.add('hidden');
         } else {
-            UI.elements.userInningsIndicator.classList.add('hidden');
-            UI.elements.compInningsIndicator.classList.remove('hidden');
+            userIndicator.classList.add('hidden');
+            compIndicator.classList.remove('hidden');
         }
         
         // Shuffle deck and deal cards
         Cards.shuffleDeck();
         Cards.dealCards();
         
+        // Always render player cards
+        Cards.renderPlayerCards();
+        
         // Set initial game state
         UI.updateDisplays();
-        
-        // Set action text based on who's batting/bowling
-        UI.setActionText();
         
         // The bowler always plays first for each ball
         if (this.state.userIsBowling) {
             // If user is bowling first, wait for user to select a bowling card
             UI.elements.actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
-            // Make sure player cards are visible
-            Cards.renderPlayerCards();
         } else {
             // If computer is bowling first, computer plays a bowling card
             this.computerPlaysBowlingCard();
@@ -119,7 +120,7 @@ const Game = {
             this.computerPlaysBattingCard();
             
             // Log
-            Utils.addLogEntry(`You bowled with <span class="log-highlight">${this.state.bowlerCardPlayed.name}</span> (${this.state.bowlerCardPlayed.vote_share}% vote share).`);
+            Utils.addLogEntry(`You bowled with <span class="highlight">${this.state.bowlerCardPlayed.name}</span> (${this.state.bowlerCardPlayed.vote_share}% vote share).`);
         }
         
         // If player is batting and bowler card already played
@@ -143,7 +144,7 @@ const Game = {
             this.processBall();
             
             // Log
-            Utils.addLogEntry(`You batted with <span class="log-highlight">${this.state.batterCardPlayed.name}</span> (${this.state.batterCardPlayed.vote_share}% vote share).`);
+            Utils.addLogEntry(`You batted with <span class="highlight">${this.state.batterCardPlayed.name}</span> (${this.state.batterCardPlayed.vote_share}% vote share).`);
         }
         
         // Update displays
@@ -176,7 +177,7 @@ const Game = {
         UI.elements.actionTextDisplay.textContent = "Your turn to bat! Select a card";
         
         // Log
-        Utils.addLogEntry(`Computer bowled with <span class="log-highlight">${this.state.bowlerCardPlayed.name}</span> (${this.state.bowlerCardPlayed.vote_share}% vote share).`);
+        Utils.addLogEntry(`Computer bowled with <span class="highlight">${this.state.bowlerCardPlayed.name}</span> (${this.state.bowlerCardPlayed.vote_share}% vote share).`);
         
         // Update displays
         UI.updateDisplays();
@@ -208,7 +209,7 @@ const Game = {
         this.processBall();
         
         // Log
-        Utils.addLogEntry(`Computer batted with <span class="log-highlight">${this.state.batterCardPlayed.name}</span> (${this.state.batterCardPlayed.vote_share}% vote share).`);
+        Utils.addLogEntry(`Computer batted with <span class="highlight">${this.state.batterCardPlayed.name}</span> (${this.state.batterCardPlayed.vote_share}% vote share).`);
         
         // Update displays
         UI.updateDisplays();
@@ -347,9 +348,9 @@ const Game = {
         
         // Log the result with more details
         if (isWicket) {
-            Utils.addLogEntry(`<span class="log-highlight">WICKET!</span> ${this.state.userIsBatting ? 'You' : 'Computer'} lost a wicket. ${outcomeDescription}`);
+            Utils.addLogEntry(`<span class="highlight">WICKET!</span> ${this.state.userIsBatting ? 'You' : 'Computer'} lost a wicket. ${outcomeDescription}`);
         } else {
-            Utils.addLogEntry(`<span class="log-highlight">${runsScored} run${runsScored !== 1 ? 's' : ''}</span> scored by ${this.state.userIsBatting ? 'you' : 'computer'}. ${outcomeDescription}`);
+            Utils.addLogEntry(`<span class="highlight">${runsScored} run${runsScored !== 1 ? 's' : ''}</span> scored by ${this.state.userIsBatting ? 'you' : 'computer'}. ${outcomeDescription}`);
         }
         
         // Update displays
@@ -358,7 +359,7 @@ const Game = {
         // Check if over is complete
         if (this.state.balls % CONFIG.BALLS_PER_OVER === 0) {
             const currentOver = Math.floor(this.state.balls / CONFIG.BALLS_PER_OVER);
-            Utils.addLogEntry(`<span class="log-highlight">End of over ${currentOver}</span>`);
+            Utils.addLogEntry(`<span class="highlight">End of over ${currentOver}</span>`);
             
             // At the end of each but the last over, bowler can refresh cards
             if (currentOver < CONFIG.TOTAL_OVERS - 1) {
@@ -474,8 +475,11 @@ const Game = {
             UI.setActionText();
         }
         
-        // Update player cards to make them clickable again
+        // Always render player cards to make sure they're visible
         Cards.renderPlayerCards();
+        
+        // Hide any UI elements that might be showing
+        UI.hideComponents();
     },
     
     /**
@@ -516,7 +520,7 @@ const Game = {
                 UI.setActionText();
             }
             
-            // Update player cards to make them clickable again
+            // Always render player cards to make sure they're visible
             Cards.renderPlayerCards();
             
             // Update displays for second innings
@@ -535,9 +539,9 @@ const Game = {
     showCardRefreshInterface: function() {
         // Display card refresh interface
         UI.elements.outcomeMessage.innerHTML = `<div class="refresh-info">Card Refresh (${this.state.cardRefreshCount + 1}/2)</div>
-                                    Select a card to discard and draw a new one`;
+                                        Select a card to discard and draw a new one`;
         
-        // Display player cards with discard option
+        // Show cards for refresh (with discard option)
         Cards.renderCardsForRefresh();
         
         // Update action text
@@ -560,9 +564,9 @@ const Game = {
         if (Cards.deck.length > 0) {
             newCard = Cards.deck.shift();
             Cards.playerCards.push(newCard);
-            Utils.addLogEntry(`You discarded <span class="log-highlight">${discardedCard.name}</span> (${discardedCard.vote_share}% vote share) and drew a new card.`);
+            Utils.addLogEntry(`You discarded <span class="highlight">${discardedCard.name}</span> (${discardedCard.vote_share}% vote share) and drew a new card.`);
         } else {
-            Utils.addLogEntry(`You discarded <span class="log-highlight">${discardedCard.name}</span>, but the deck is empty!`);
+            Utils.addLogEntry(`You discarded <span class="highlight">${discardedCard.name}</span>, but the deck is empty!`);
         }
         
         // Increment refresh count
@@ -727,7 +731,7 @@ const Game = {
                 this.state.target = this.state.userRuns + 1;
                 
                 // Message for transition to player bowling
-                Utils.addLogEntry(`<span class="log-highlight">First innings over!</span> Computer needs ${this.state.target} runs to win.`);
+                Utils.addLogEntry(`<span class="highlight">First innings over!</span> Computer needs ${this.state.target} runs to win.`);
                 
                 UI.showInningsSummary(`
                     <div class="refresh-info">Innings Complete</div>
@@ -738,7 +742,7 @@ const Game = {
                 this.state.target = this.state.compRuns + 1;
                 
                 // Message for transition to player batting
-                Utils.addLogEntry(`<span class="log-highlight">First innings over!</span> You need ${this.state.target} runs to win.`);
+                Utils.addLogEntry(`<span class="highlight">First innings over!</span> You need ${this.state.target} runs to win.`);
                 
                 UI.showInningsSummary(`
                     <div class="refresh-info">Innings Complete</div>
@@ -755,11 +759,11 @@ const Game = {
             
             // Update innings indicators
             if (this.state.userIsBatting) {
-                UI.elements.userInningsIndicator.classList.remove('hidden');
-                UI.elements.compInningsIndicator.classList.add('hidden');
+                document.getElementById('user-innings-indicator').classList.remove('hidden');
+                document.getElementById('comp-innings-indicator').classList.add('hidden');
             } else {
-                UI.elements.userInningsIndicator.classList.add('hidden');
-                UI.elements.compInningsIndicator.classList.remove('hidden');
+                document.getElementById('user-innings-indicator').classList.add('hidden');
+                document.getElementById('comp-innings-indicator').classList.remove('hidden');
             }
             
             // Reset balls count for new innings
@@ -845,7 +849,7 @@ const Game = {
         UI.showGameSummary(winner, winMessage, winReason);
         
         // Log the result
-        Utils.addLogEntry(`<span class="log-highlight">GAME OVER!</span> ${winMessage} ${winReason}`);
+        Utils.addLogEntry(`<span class="highlight">GAME OVER!</span> ${winMessage} ${winReason}`);
     },
     
     /**
@@ -874,7 +878,7 @@ const Game = {
         
         // Reset displays
         UI.resetCardDisplays();
-        UI.elements.resultDisplay.textContent = '';
+        document.getElementById('result-display').textContent = '';
         UI.hideComponents();
         UI.resetNextBallButton();
         
@@ -885,8 +889,8 @@ const Game = {
         UI.showStartScreen();
         
         // Reset innings indicators
-        UI.elements.userInningsIndicator.classList.add('hidden');
-        UI.elements.compInningsIndicator.classList.add('hidden');
+        document.getElementById('user-innings-indicator').classList.add('hidden');
+        document.getElementById('comp-innings-indicator').classList.add('hidden');
         
         // Re-shuffle the deck
         Cards.shuffleDeck();
