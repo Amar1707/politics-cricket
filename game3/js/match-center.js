@@ -1,487 +1,503 @@
 /**
- * UI Management for the Cricket Card Game
- * Handles display updates and UI state
+ * Match Center functionality for Cricket Card Game
+ * Handles the integrated display of match information, commentary, and scorecards
  */
-const UI = {
-    // DOM element references
-    elements: {
-        startScreen: document.getElementById('start-screen'),
-        gameScreen: document.getElementById('game-screen'),
-        batFirstBtn: document.getElementById('bat-first-btn'),
-        bowlFirstBtn: document.getElementById('bowl-first-btn'),
-        resetBtn: document.getElementById('reset-btn'),
-        userRunsDisplay: document.getElementById('user-runs'),
-        userWicketsDisplay: document.getElementById('user-wickets'),
-        userOversDisplay: document.getElementById('user-overs'),
-        compRunsDisplay: document.getElementById('comp-runs'),
-        compWicketsDisplay: document.getElementById('comp-wickets'),
-        compOversDisplay: document.getElementById('comp-overs'),
-        targetRunsDisplay: document.getElementById('target-runs'),
-        reqRunsDisplay: document.getElementById('req-runs'),
-        currentOverDisplay: document.getElementById('current-over'),
-        ballCountDisplay: document.getElementById('ball-count'),
-        runRateDisplay: document.getElementById('run-rate'),
-        bowlerCardDisplay: document.getElementById('bowler-card'),
-        batterCardDisplay: document.getElementById('batter-card'),
-        playerCardsDisplay: document.getElementById('player-cards'),
-        actionTextDisplay: document.getElementById('action-text'),
-        userInningsIndicator: document.getElementById('user-innings-indicator'),
-        compInningsIndicator: document.getElementById('comp-innings-indicator'),
-        resultDisplay: document.getElementById('result-display'),
-        // New elements in the match center
-        lastBallDisplay: document.getElementById('last-ball'),
-        outcomeResultDisplay: document.getElementById('outcome-result'),
-        outcomeDetailsDisplay: document.getElementById('outcome-details'),
-        nextBallBtn: document.getElementById('next-ball-btn'),
-        continueInningsBtn: document.getElementById('continue-innings-btn')
+const MatchCenter = {
+    // Match data storage
+    data: {
+        firstInnings: {
+            team: null,
+            runs: 0,
+            wickets: 0,
+            overs: "0.0",
+            balls: [],
+            overDetails: []
+        },
+        secondInnings: {
+            team: null,
+            runs: 0,
+            wickets: 0,
+            overs: "0.0",
+            balls: [],
+            overDetails: []
+        },
+        currentInningsNum: 1
     },
     
     /**
-     * Initialize UI
+     * Initialize the Match Center
      */
     init: function() {
-        // Setup event listeners
-        this.elements.batFirstBtn.addEventListener('click', () => Game.startGame(true));
-        this.elements.bowlFirstBtn.addEventListener('click', () => Game.startGame(false));
-        this.elements.resetBtn.addEventListener('click', () => Game.resetGame());
-        this.elements.nextBallBtn.addEventListener('click', () => Game.prepareNextBall());
-        this.elements.continueInningsBtn.addEventListener('click', () => Game.handleContinueInnings());
+        // Set up tab switching
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                const tabId = button.getAttribute('data-tab');
+                this.switchTab(tabId);
+            });
+        });
         
-        // Initialize match center
-        MatchCenter.init();
+        // Set up innings tab switching
+        const inningsTabs = document.querySelectorAll('.innings-tab');
+        inningsTabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                const inningsId = tab.getAttribute('data-innings');
+                this.switchInningsTab(inningsId);
+            });
+        });
+        
+        // Setup event delegation for log entries to maintain scrolling
+        const logEntriesContainer = document.getElementById('log-entries');
+        logEntriesContainer.addEventListener('DOMNodeInserted', () => {
+            // Keep the log scrolled to the top (newest entries)
+            logEntriesContainer.scrollTop = 0;
+        });
     },
     
     /**
-     * Show the game screen and hide the start screen
+     * Switch between tabs
+     * @param {string} tabId - ID of the tab to switch to
      */
-    showGameScreen: function() {
-        this.elements.startScreen.classList.add('hidden');
-        this.elements.gameScreen.classList.remove('hidden');
-    },
-    
-    /**
-     * Show the start screen and hide the game screen
-     */
-    showStartScreen: function() {
-        this.elements.gameScreen.classList.add('hidden');
-        this.elements.startScreen.classList.remove('hidden');
-    },
-    
-    /**
-     * Update scoreboard and stats
-     */
-    updateDisplays: function() {
-        const gameState = Game.state;
-        
-        // Update runs and wickets
-        this.elements.userRunsDisplay.textContent = gameState.userRuns;
-        this.elements.userWicketsDisplay.textContent = gameState.userWickets;
-        this.elements.compRunsDisplay.textContent = gameState.compRuns;
-        this.elements.compWicketsDisplay.textContent = gameState.compWickets;
-        
-        // Calculate overs for display
-        let userOvers, compOvers;
-        
-        if (gameState.currentInnings === 1) {
-            // First innings in progress
-            if (gameState.userIsBatting) {
-                userOvers = Utils.formatOvers(gameState.balls);
-                compOvers = '0.0';
+    switchTab: function(tabId) {
+        // Update tab buttons
+        const tabButtons = document.querySelectorAll('.tab-button');
+        tabButtons.forEach(button => {
+            if (button.getAttribute('data-tab') === tabId) {
+                button.classList.add('active');
             } else {
-                userOvers = '0.0';
-                compOvers = Utils.formatOvers(gameState.balls);
+                button.classList.remove('active');
             }
+        });
+        
+        // Update tab content
+        const tabContents = document.querySelectorAll('.tab-content');
+        tabContents.forEach(content => {
+            if (content.id === `${tabId}-tab`) {
+                content.classList.add('active');
+            } else {
+                content.classList.remove('active');
+            }
+        });
+    },
+    
+    /**
+     * Switch between innings tabs in the scorecard
+     * @param {string} inningsId - ID of the innings tab to switch to
+     */
+    switchInningsTab: function(inningsId) {
+        // Update innings tabs
+        const inningsTabs = document.querySelectorAll('.innings-tab');
+        inningsTabs.forEach(tab => {
+            if (tab.getAttribute('data-innings') === inningsId) {
+                tab.classList.add('active');
+            } else {
+                tab.classList.remove('active');
+            }
+        });
+        
+        // Update innings content
+        if (inningsId === 'current') {
+            document.getElementById('current-innings-details').classList.remove('hidden');
+            document.getElementById('previous-innings-details').classList.add('hidden');
         } else {
-            // Second innings - use stored data for first innings
-            if (gameState.firstInningsData) {
-                if (gameState.firstInningsData.team === 'user') {
-                    // User batted first
-                    userOvers = gameState.firstInningsData.overs;
-                    compOvers = Utils.formatOvers(gameState.balls);
-                } else {
-                    // Computer batted first
-                    compOvers = gameState.firstInningsData.overs;
-                    userOvers = Utils.formatOvers(gameState.balls);
-                }
-            } else {
-                // Fallback if no stored data
-                if (gameState.userIsBatting) {
-                    userOvers = Utils.formatOvers(gameState.balls);
-                    compOvers = `${CONFIG.TOTAL_OVERS}.0`; // Assume completed
-                } else {
-                    userOvers = `${CONFIG.TOTAL_OVERS}.0`; // Assume completed
-                    compOvers = Utils.formatOvers(gameState.balls);
-                }
-            }
+            document.getElementById('current-innings-details').classList.add('hidden');
+            document.getElementById('previous-innings-details').classList.remove('hidden');
+        }
+    },
+    
+    /**
+     * Update the match center with current game state
+     * @param {object} gameState - Current game state
+     */
+    updateMatchCenter: function(gameState) {
+        // Update basic match information
+        this.updateMatchInfo(gameState);
+        
+        // Store ball outcome for current innings
+        if (gameState.lastBallOutcome && !gameState.waitingForNextBall) {
+            this.storeBallOutcome(gameState);
         }
         
-        this.elements.userOversDisplay.textContent = userOvers;
-        this.elements.compOversDisplay.textContent = compOvers;
+        // Update scorecard details
+        this.updateScorecardDetails(gameState);
         
-        // Update current over and ball display for current innings
-        this.elements.currentOverDisplay.textContent = Utils.formatOvers(gameState.balls);
-        this.elements.ballCountDisplay.textContent = gameState.balls;
+        // Update last ball info
+        if (gameState.lastBallOutcome) {
+            document.getElementById('last-ball').textContent = gameState.lastBallOutcome;
+            document.getElementById('last-ball').className = 'info-value';
+            if (gameState.lastBallWicket) {
+                document.getElementById('last-ball').classList.add('wicket-text');
+            } else if (gameState.lastBallRuns === 4) {
+                document.getElementById('last-ball').classList.add('four-text');
+            } else if (gameState.lastBallRuns === 6) {
+                document.getElementById('last-ball').classList.add('six-text');
+            }
+        }
+    },
+    
+    /**
+     * Update basic match information display
+     * @param {object} gameState - Current game state
+     */
+    updateMatchInfo: function(gameState) {
+        // Determine current innings data
+        const currentInningsData = this.getCurrentInningsData(gameState);
         
-        // Update target and required runs if available
-        if (gameState.target) {
-            this.elements.targetRunsDisplay.textContent = gameState.target;
+        // Update display
+        if (gameState.currentInnings === 2 && gameState.target) {
+            // Show target information
+            document.getElementById('target-container').classList.remove('hidden');
+            document.getElementById('target-runs').textContent = gameState.target;
             
+            // Show required runs
+            document.getElementById('req-container').classList.remove('hidden');
             const currentRuns = gameState.userIsBatting ? gameState.userRuns : gameState.compRuns;
             const requiredRuns = Math.max(0, gameState.target - currentRuns);
+            document.getElementById('req-runs').textContent = requiredRuns;
             
-            this.elements.reqRunsDisplay.textContent = requiredRuns;
+            // Calculate required run rate if applicable
+            const ballsRemaining = (CONFIG.TOTAL_OVERS * CONFIG.BALLS_PER_OVER) - gameState.balls;
+            if (ballsRemaining > 0 && requiredRuns > 0) {
+                const requiredRunRate = (requiredRuns / ballsRemaining) * 6;
+                document.getElementById('req-runs-label').textContent = `Need ${requiredRuns} (RRR: ${requiredRunRate.toFixed(2)})`;
+            } else {
+                document.getElementById('req-runs-label').textContent = `Need ${requiredRuns}`;
+            }
         } else {
-            this.elements.targetRunsDisplay.textContent = '-';
-            this.elements.reqRunsDisplay.textContent = '-';
+            // Hide target and required runs for first innings
+            document.getElementById('target-container').classList.add('hidden');
+            document.getElementById('req-container').classList.add('hidden');
         }
         
-        // Calculate and update run rate
-        if (gameState.balls > 0) {
+        // Update match status message
+        this.updateMatchStatusMessage(gameState);
+    },
+    
+    /**
+     * Get current innings data
+     * @param {object} gameState - Current game state
+     * @returns {object} Current innings data
+     */
+    getCurrentInningsData: function(gameState) {
+        if (gameState.currentInnings === 1) {
+            // First innings
+            this.data.currentInningsNum = 1;
+            if (gameState.userIsBatting) {
+                this.data.firstInnings.team = "user";
+                this.data.firstInnings.runs = gameState.userRuns;
+                this.data.firstInnings.wickets = gameState.userWickets;
+                this.data.firstInnings.overs = Utils.formatOvers(gameState.balls);
+                return this.data.firstInnings;
+            } else {
+                this.data.firstInnings.team = "comp";
+                this.data.firstInnings.runs = gameState.compRuns;
+                this.data.firstInnings.wickets = gameState.compWickets;
+                this.data.firstInnings.overs = Utils.formatOvers(gameState.balls);
+                return this.data.firstInnings;
+            }
+        } else {
+            // Second innings
+            this.data.currentInningsNum = 2;
+            if (gameState.userIsBatting) {
+                this.data.secondInnings.team = "user";
+                this.data.secondInnings.runs = gameState.userRuns;
+                this.data.secondInnings.wickets = gameState.userWickets;
+                this.data.secondInnings.overs = Utils.formatOvers(gameState.balls);
+                return this.data.secondInnings;
+            } else {
+                this.data.secondInnings.team = "comp";
+                this.data.secondInnings.runs = gameState.compRuns;
+                this.data.secondInnings.wickets = gameState.compWickets;
+                this.data.secondInnings.overs = Utils.formatOvers(gameState.balls);
+                return this.data.secondInnings;
+            }
+        }
+    },
+    
+    /**
+     * Store ball outcome for the current innings
+     * @param {object} gameState - Current game state
+     */
+    storeBallOutcome: function(gameState) {
+        // Get current innings data
+        const innings = gameState.currentInnings === 1 ? this.data.firstInnings : this.data.secondInnings;
+        
+        // Create ball outcome data
+        const ballData = {
+            runs: gameState.lastBallRuns,
+            isWicket: gameState.lastBallWicket,
+            outcome: gameState.lastBallOutcome,
+            over: Math.floor((gameState.balls - 1) / CONFIG.BALLS_PER_OVER) + 1,
+            ball: (gameState.balls - 1) % CONFIG.BALLS_PER_OVER + 1,
+            bowler: gameState.bowlerCardPlayed ? gameState.bowlerCardPlayed.name : null,
+            batter: gameState.batterCardPlayed ? gameState.batterCardPlayed.name : null
+        };
+        
+        // Add to balls array
+        innings.balls.push(ballData);
+        
+        // Update over details
+        const overIndex = Math.floor((gameState.balls - 1) / CONFIG.BALLS_PER_OVER);
+        if (!innings.overDetails[overIndex]) {
+            innings.overDetails[overIndex] = {
+                overNum: overIndex + 1,
+                balls: [],
+                runs: 0,
+                wickets: 0
+            };
+        }
+        
+        innings.overDetails[overIndex].balls.push(ballData);
+        innings.overDetails[overIndex].runs += ballData.runs;
+        if (ballData.isWicket) {
+            innings.overDetails[overIndex].wickets++;
+        }
+    },
+    
+    /**
+     * Update scorecard details
+     * @param {object} gameState - Current game state
+     */
+    updateScorecardDetails: function(gameState) {
+        // Update current innings scorecard
+        const currentInnings = gameState.currentInnings === 1 ? this.data.firstInnings : this.data.secondInnings;
+        const currentTeamName = currentInnings.team === "user" ? "You" : "Computer";
+        
+        document.getElementById('current-innings-team').textContent = `${currentTeamName}`;
+        document.getElementById('current-innings-score').textContent = `${currentInnings.runs}/${currentInnings.wickets} (${currentInnings.overs})`;
+        
+        // Generate over-by-over display
+        const currentOversList = document.getElementById('current-innings-overs');
+        currentOversList.innerHTML = '';
+        
+        currentInnings.overDetails.forEach(over => {
+            const overItem = document.createElement('div');
+            overItem.className = 'over-item';
+            
+            const overNum = document.createElement('div');
+            overNum.className = 'over-num';
+            overNum.textContent = `Over ${over.overNum}`;
+            
+            const overBalls = document.createElement('div');
+            overBalls.className = 'over-balls';
+            
+            over.balls.forEach(ball => {
+                const ballItem = document.createElement('div');
+                ballItem.className = 'ball-item';
+                
+                if (ball.isWicket) {
+                    ballItem.classList.add('ball-wicket');
+                    ballItem.textContent = 'W';
+                } else if (ball.runs === 0) {
+                    ballItem.classList.add('ball-dot');
+                    ballItem.textContent = '•';
+                } else if (ball.runs === 4) {
+                    ballItem.classList.add('ball-four');
+                    ballItem.textContent = '4';
+                } else if (ball.runs === 6) {
+                    ballItem.classList.add('ball-six');
+                    ballItem.textContent = '6';
+                } else {
+                    ballItem.classList.add('ball-runs');
+                    ballItem.textContent = ball.runs;
+                }
+                
+                ballItem.title = `${ball.batter} vs ${ball.bowler}: ${ball.outcome}`;
+                overBalls.appendChild(ballItem);
+            });
+            
+            // Add over summary
+            const overSummary = document.createElement('div');
+            overSummary.className = 'over-summary';
+            overSummary.textContent = `${over.runs}/${over.wickets}`;
+            
+            overItem.appendChild(overNum);
+            overItem.appendChild(overBalls);
+            overItem.appendChild(overSummary);
+            currentOversList.appendChild(overItem);
+        });
+        
+        // Update previous innings scorecard if available
+        if (gameState.currentInnings === 2 && gameState.firstInningsData) {
+            const previousInnings = this.data.firstInnings;
+            const previousTeamName = previousInnings.team === "user" ? "You" : "Computer";
+            
+            document.getElementById('previous-innings-team').textContent = `${previousTeamName}`;
+            document.getElementById('previous-innings-score').textContent = `${previousInnings.runs}/${previousInnings.wickets} (${previousInnings.overs})`;
+            
+            // Generate over-by-over display for previous innings
+            const previousOversList = document.getElementById('previous-innings-overs');
+            previousOversList.innerHTML = '';
+            
+            previousInnings.overDetails.forEach(over => {
+                const overItem = document.createElement('div');
+                overItem.className = 'over-item';
+                
+                const overNum = document.createElement('div');
+                overNum.className = 'over-num';
+                overNum.textContent = `Over ${over.overNum}`;
+                
+                const overBalls = document.createElement('div');
+                overBalls.className = 'over-balls';
+                
+                over.balls.forEach(ball => {
+                    const ballItem = document.createElement('div');
+                    ballItem.className = 'ball-item';
+                    
+                    if (ball.isWicket) {
+                        ballItem.classList.add('ball-wicket');
+                        ballItem.textContent = 'W';
+                    } else if (ball.runs === 0) {
+                        ballItem.classList.add('ball-dot');
+                        ballItem.textContent = '•';
+                    } else if (ball.runs === 4) {
+                        ballItem.classList.add('ball-four');
+                        ballItem.textContent = '4';
+                    } else if (ball.runs === 6) {
+                        ballItem.classList.add('ball-six');
+                        ballItem.textContent = '6';
+                    } else {
+                        ballItem.classList.add('ball-runs');
+                        ballItem.textContent = ball.runs;
+                    }
+                    
+                    ballItem.title = `${ball.batter} vs ${ball.bowler}: ${ball.outcome}`;
+                    overBalls.appendChild(ballItem);
+                });
+                
+                // Add over summary
+                const overSummary = document.createElement('div');
+                overSummary.className = 'over-summary';
+                overSummary.textContent = `${over.runs}/${over.wickets}`;
+                
+                overItem.appendChild(overNum);
+                overItem.appendChild(overBalls);
+                overItem.appendChild(overSummary);
+                previousOversList.appendChild(overItem);
+            });
+        }
+    },
+    
+    /**
+     * Update match status message
+     * @param {object} gameState - Current game state
+     */
+    updateMatchStatusMessage: function(gameState) {
+        const messageEl = document.getElementById('match-status-message');
+        const resultDisplay = document.getElementById('result-display');
+        
+        if (gameState.currentInnings === 2 && gameState.target) {
             const currentRuns = gameState.userIsBatting ? gameState.userRuns : gameState.compRuns;
-            this.elements.runRateDisplay.textContent = Utils.calculateRunRate(currentRuns, gameState.balls);
+            const requiredRuns = Math.max(0, gameState.target - currentRuns);
+            const remainingBalls = (CONFIG.TOTAL_OVERS * CONFIG.BALLS_PER_OVER) - gameState.balls;
+            const remainingWickets = CONFIG.TOTAL_WICKETS - (gameState.userIsBatting ? gameState.userWickets : gameState.compWickets);
+            
+            if (requiredRuns > 0) {
+                const battingTeam = gameState.userIsBatting ? "You" : "Computer";
+                resultDisplay.textContent = `${battingTeam} need ${requiredRuns} runs from ${remainingBalls} balls with ${remainingWickets} wickets remaining`;
+                messageEl.classList.remove('hidden');
+            } else {
+                messageEl.classList.add('hidden');
+            }
         } else {
-            this.elements.runRateDisplay.textContent = '0.00';
+            // First innings - show basic information
+            messageEl.classList.add('hidden');
         }
-        
-        // Update innings indicators
-        if (gameState.userIsBatting) {
-            this.elements.userInningsIndicator.classList.remove('hidden');
-            this.elements.compInningsIndicator.classList.add('hidden');
-        } else {
-            this.elements.userInningsIndicator.classList.add('hidden');
-            this.elements.compInningsIndicator.classList.remove('hidden');
-        }
-        
-        // Update action text based on waiting state
-        this.setActionText();
-        
-        // Update the match center with current game state
-        MatchCenter.updateMatchCenter(gameState);
     },
     
     /**
-     * Set action text based on current game state
+     * Show ball outcome in the live updates area
+     * @param {string} outcome - Outcome text (e.g., "WICKET!" or "4 RUNS!")
+     * @param {string} details - Detailed explanation of the outcome
      */
-    setActionText: function() {
-        const gameState = Game.state;
+    showBallOutcome: function(outcome, details) {
+        // Update ball outcome display
+        const ballOutcome = document.getElementById('ball-outcome');
+        const outcomeResult = document.getElementById('outcome-result');
+        const outcomeDetails = document.getElementById('outcome-details');
         
-        if (gameState.isCardRefreshTime) {
-            this.elements.actionTextDisplay.textContent = `Select a card to discard (${gameState.cardRefreshCount + 1}/2)`;
-        } else if (gameState.waitingForNextBall && this.elements.nextBallBtn.textContent === "Start Second Innings") {
-            this.elements.actionTextDisplay.textContent = 'Click "Start Second Innings" to continue';
-        } else if (gameState.waitingForNextBall && this.elements.nextBallBtn.textContent === "Manage Cards") {
-            this.elements.actionTextDisplay.textContent = 'Click "Manage Cards" to refresh your cards';
-        } else if (gameState.waitingForNextBall && this.elements.nextBallBtn.textContent === "Start Next Over") {
-            this.elements.actionTextDisplay.textContent = 'Click "Start Next Over" to continue';
-        } else if (gameState.waitingForNextBall) {
-            this.elements.actionTextDisplay.textContent = 'Click "Next Ball" to continue';
-        } else if (gameState.userIsBowling && !gameState.bowlerCardPlayed) {
-            this.elements.actionTextDisplay.textContent = 'Your turn to bowl! Select a card';
-        } else if (gameState.userIsBatting && gameState.bowlerCardPlayed) {
-            this.elements.actionTextDisplay.textContent = 'Your turn to bat! Select a card';
-        } else if (gameState.userIsBatting && !gameState.bowlerCardPlayed) {
-            this.elements.actionTextDisplay.textContent = 'Please wait for the computer to bowl';
-        } else if (gameState.userIsBowling && gameState.bowlerCardPlayed) {
-            this.elements.actionTextDisplay.textContent = 'Please wait for the computer to bat';
-        }
+        outcomeResult.textContent = outcome;
+        outcomeDetails.innerHTML = details;
+        
+        ballOutcome.classList.remove('hidden');
+        document.getElementById('innings-summary').classList.add('hidden');
+        document.getElementById('game-summary').classList.add('hidden');
+        
+        // Make sure the live tab is active
+        this.switchTab('live');
     },
     
     /**
-     * Display a card in the card display area
-     * @param {object} card - Card object to display
-     * @param {Element} displayElement - DOM element to display the card in
-     */
-    displayCard: function(card, displayElement) {
-        displayElement.innerHTML = `
-            <div class="card-header">${card.name}</div>
-            <img src="${card.photo}" alt="${card.name}" class="player-image">
-            <div class="card-body">
-                <div class="card-info">
-                    <span class="info-label">Party:</span>
-                    <span class="info-value party-tag">${card.party}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Age:</span>
-                    <span class="info-value">${card.age}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Gender:</span>
-                    <span class="info-value">${card.gender}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Vote Share:</span>
-                    <span class="info-value">${card.vote_share}%</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Rank:</span>
-                    <span class="info-value">${card.rank}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Constituency:</span>
-                    <span class="info-value">${card.constituency}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">State:</span>
-                    <span class="info-value">${card.state}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Type:</span>
-                    <span class="info-value">${card.type}</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Turnout:</span>
-                    <span class="info-value">${card.turnout}%</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Margin:</span>
-                    <span class="info-value">${card.margin}%</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Female Turnout Edge:</span>
-                    <span class="info-value">${card.female_turnout_edge}%</span>
-                </div>
-            </div>
-        `;
-    },
-    
-    /**
-     * Reset card displays to default state
-     */
-    resetCardDisplays: function() {
-        const defaultCardHTML = `
-            <div class="card-header">Select a card to start</div>
-            <img src="https://via.placeholder.com/400x180?text=Select+a+Card" alt="Candidate Photo" class="player-image">
-            <div class="card-body">
-                <div class="card-info">
-                    <span class="info-label">Party:</span>
-                    <span class="info-value party-tag">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Age:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Gender:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Vote Share:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Rank:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Constituency:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">State:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Type:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Turnout:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Margin:</span>
-                    <span class="info-value">-</span>
-                </div>
-                <div class="card-info">
-                    <span class="info-label">Female Turnout Edge:</span>
-                    <span class="info-value">-</span>
-                </div>
-            </div>
-        `;
-        
-        this.elements.bowlerCardDisplay.innerHTML = defaultCardHTML;
-        this.elements.batterCardDisplay.innerHTML = defaultCardHTML;
-    },
-    
-    /**
-     * Show game outcome for a ball
-     * @param {string} outcome - The outcome text
-     * @param {string} description - Description of the outcome
-     * @param {boolean} isWicket - Whether a wicket fell
-     * @param {number} runsScored - Runs scored on the ball
-     */
-    showBallOutcome: function(outcome, description, isWicket, runsScored) {
-        const gameState = Game.state;
-        const battingTeam = gameState.userIsBatting ? 'You' : 'Computer';
-        
-        let resultText = '';
-        if (isWicket) {
-            resultText = `${battingTeam} lost a wicket!`;
-        } else {
-            resultText = runsScored === 0 
-                ? 'Dot ball!' 
-                : `${battingTeam} scored ${runsScored} run${runsScored !== 1 ? 's' : ''}!`;
-        }
-        
-        // Create detailed HTML description
-        const detailsHtml = `
-            <p>${description}</p>
-            <p>${resultText}</p>
-        `;
-        
-        // Show in match center
-        MatchCenter.showBallOutcome(outcome, detailsHtml);
-        
-        // For backward compatibility with Game.js logic - we keep the old outcome elements too
-        const oldOutcomeMessage = document.getElementById('outcome-message');
-        if (oldOutcomeMessage) {
-            oldOutcomeMessage.innerHTML = `
-                <div class="refresh-info">${outcome}</div>
-                <p>${description}</p>
-                <p>${resultText}</p>
-            `;
-            document.getElementById('outcome-area').classList.remove('hidden');
-        }
-    },
-    
-    /**
-     * Show innings summary
-     * @param {string} message - Message to display
+     * Show innings summary in the live updates area
+     * @param {string} message - Innings summary message
      */
     showInningsSummary: function(message) {
-        // Show in match center
-        MatchCenter.showInningsSummary(message);
+        const inningsSummary = document.getElementById('innings-summary');
+        const inningsDetails = document.getElementById('innings-details');
         
-        // For backward compatibility with Game.js logic
-        const oldInningsSummaryMessage = document.getElementById('innings-summary-message');
-        if (oldInningsSummaryMessage) {
-            oldInningsSummaryMessage.innerHTML = message;
-            document.getElementById('innings-summary-area').classList.remove('hidden');
-        }
+        inningsDetails.innerHTML = message;
+        
+        inningsSummary.classList.remove('hidden');
+        document.getElementById('ball-outcome').classList.add('hidden');
+        document.getElementById('game-summary').classList.add('hidden');
+        
+        // Make sure the live tab is active
+        this.switchTab('live');
     },
     
     /**
-     * Show game summary
+     * Show game summary in the live updates area
      * @param {string} winner - The winner of the game
      * @param {string} winMessage - Message about the win
      * @param {string} winReason - Reason for the win
+     * @param {string} userScore - User's final score
+     * @param {string} compScore - Computer's final score
      */
-    showGameSummary: function(winner, winMessage, winReason) {
-        // Update winner in result display
-        this.elements.resultDisplay.textContent = `${winner} won the match!`;
+    showGameSummary: function(winner, winMessage, winReason, userScore, compScore) {
+        const gameSummary = document.getElementById('game-summary');
+        const summaryResult = document.getElementById('final-result');
+        const summaryDetails = document.getElementById('game-summary-details');
+        const finalUserScore = document.getElementById('final-user-score');
+        const finalCompScore = document.getElementById('final-comp-score');
         
-        // Update final scoreboard
-        const gameState = Game.state;
+        summaryResult.textContent = winMessage;
+        summaryDetails.innerHTML = `<p>${winReason}</p>`;
+        finalUserScore.textContent = userScore;
+        finalCompScore.textContent = compScore;
         
-        // Get innings data
-        let userOversPlayed, compOversPlayed;
-        
-        if (gameState.currentInnings === 2) {
-            // Both innings were played
-            if (gameState.firstInningsData) {
-                // Use stored data for first innings
-                if (gameState.firstInningsData.team === "user") {
-                    // User batted first
-                    userOversPlayed = gameState.firstInningsData.overs;
-                    compOversPlayed = Utils.formatOvers(gameState.balls);
-                } else {
-                    // Computer batted first
-                    compOversPlayed = gameState.firstInningsData.overs;
-                    userOversPlayed = Utils.formatOvers(gameState.balls);
-                }
-            } else {
-                // Fallback if firstInningsData not available
-                userOversPlayed = gameState.userIsBatting ? 
-                    Utils.formatOvers(gameState.balls) : 
-                    `${CONFIG.TOTAL_OVERS}.0`;
-                compOversPlayed = !gameState.userIsBatting ? 
-                    Utils.formatOvers(gameState.balls) : 
-                    `${CONFIG.TOTAL_OVERS}.0`;
-            }
-        } else {
-            // Only one innings was played (shouldn't happen normally)
-            userOversPlayed = gameState.userIsBatting ? 
-                Utils.formatOvers(gameState.balls) : 
-                '0.0';
-            compOversPlayed = !gameState.userIsBatting ? 
-                Utils.formatOvers(gameState.balls) : 
-                '0.0';
-        }
-        
-        // Format final scores
-        const userFinalScore = `${gameState.userRuns}/${gameState.userWickets} (${userOversPlayed})`;
-        const compFinalScore = `${gameState.compRuns}/${gameState.compWickets} (${compOversPlayed})`;
-        
-        // Show in match center
-        MatchCenter.showGameSummary(winner, winMessage, winReason, userFinalScore, compFinalScore);
-        
-        // For backward compatibility - update old elements
-        const oldFinalUserScore = document.getElementById('final-user-score');
-        const oldFinalCompScore = document.getElementById('final-comp-score');
-        const oldFinalResult = document.getElementById('final-result');
-        const oldGameSummaryMessage = document.getElementById('game-summary-message');
-        
-        if (oldFinalUserScore && oldFinalCompScore && oldFinalResult && oldGameSummaryMessage) {
-            oldFinalUserScore.textContent = userFinalScore;
-            oldFinalCompScore.textContent = compFinalScore;
-            oldFinalResult.textContent = winMessage;
-            
-            oldGameSummaryMessage.innerHTML = `
-                <p>${winMessage}</p>
-                <p>${winReason}</p>
-                <p style="margin-top: 15px;">The ball outcome above shows what happened on the final delivery.</p>
-            `;
-            
-            document.getElementById('game-summary-area').classList.remove('hidden');
-        }
-    },
-    
-    /**
-     * Hide UI components
-     */
-    hideComponents: function() {
-        // Hide ball outcome
+        gameSummary.classList.remove('hidden');
         document.getElementById('ball-outcome').classList.add('hidden');
-        
-        // Hide innings summary
         document.getElementById('innings-summary').classList.add('hidden');
         
-        // Hide game summary
-        document.getElementById('game-summary').classList.add('hidden');
+        // Make sure the live tab is active
+        this.switchTab('live');
+    },
+    
+    /**
+     * Format a log entry for the commentary
+     * @param {string} text - Log text
+     * @returns {HTMLElement} Formatted log entry element
+     */
+    formatLogEntry: function(text) {
+        const entryElement = document.createElement('div');
+        entryElement.className = 'commentary-item';
         
-        // For backward compatibility
-        document.getElementById('outcome-area').classList.add('hidden');
-        document.getElementById('innings-summary-area').classList.add('hidden');
-        document.getElementById('game-summary-area').classList.add('hidden');
-    },
-    
-    /**
-     * Reset next ball button text
-     */
-    resetNextBallButton: function() {
-        this.elements.nextBallBtn.textContent = "Next Ball";
-    },
-    
-    /**
-     * Set next ball button text
-     * @param {string} text - Text for the button
-     */
-    setNextBallButtonText: function(text) {
-        this.elements.nextBallBtn.textContent = text;
-    },
-    
-    /**
-     * Set continue innings button text
-     * @param {string} text - Text for the button
-     */
-    setContinueInningsButtonText: function(text) {
-        this.elements.continueInningsBtn.textContent = text;
-    },
-    
-    /**
-     * Clear log entries
-     */
-    clearLog: function() {
-        document.getElementById('log-entries').innerHTML = '';
+        const timeElement = document.createElement('div');
+        timeElement.className = 'commentary-time';
+        
+        // Create timestamp
+        const now = new Date();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        timeElement.textContent = `${hours}:${minutes}`;
+        
+        const textElement = document.createElement('div');
+        textElement.className = 'commentary-text';
+        textElement.innerHTML = text;
+        
+        entryElement.appendChild(timeElement);
+        entryElement.appendChild(textElement);
+        
+        return entryElement;
     }
 };
