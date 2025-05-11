@@ -147,9 +147,13 @@ const UI = {
         if (gameState.userIsBatting) {
             this.elements.userInningsIndicator.classList.remove('hidden');
             this.elements.compInningsIndicator.classList.add('hidden');
-        } else {
+        } else if (gameState.currentInnings > 0) { // Only show computer batting if game has started
             this.elements.userInningsIndicator.classList.add('hidden');
             this.elements.compInningsIndicator.classList.remove('hidden');
+        } else {
+            // Hide both indicators initially
+            this.elements.userInningsIndicator.classList.add('hidden');
+            this.elements.compInningsIndicator.classList.add('hidden');
         }
         
         // Update action text based on waiting state
