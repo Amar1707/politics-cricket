@@ -1,0 +1,383 @@
+/* Match Center styles for Cricket Card Game */
+
+.match-center {
+    background-color: white;
+    border-radius: var(--border-radius);
+    box-shadow: var(--card-shadow);
+    margin-bottom: 30px;
+    overflow: hidden;
+}
+
+/* Header with team scores */
+.match-center-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
+    background-color: var(--secondary-color);
+    color: white;
+}
+
+.team-score {
+    text-align: center;
+    flex: 1;
+}
+
+.team-name {
+    font-weight: bold;
+    font-size: 1.2rem;
+    margin-bottom: 5px;
+}
+
+.score-display {
+    font-size: 1.5rem;
+    font-weight: bold;
+}
+
+.overs-display {
+    font-size: 1rem;
+    opacity: 0.8;
+}
+
+.innings-indicator {
+    background-color: var(--accent-color);
+    color: white;
+    padding: 3px 8px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    display: inline-block;
+    margin-top: 5px;
+}
+
+.match-status {
+    text-align: center;
+    flex: 1;
+}
+
+.target-display {
+    margin-bottom: 8px;
+}
+
+.target-label {
+    font-size: 0.9rem;
+    margin-bottom: 2px;
+}
+
+.target-value {
+    font-size: 1.3rem;
+    font-weight: bold;
+}
+
+.required-info {
+    font-size: 0.9rem;
+}
+
+/* Current information bar */
+.current-info-bar {
+    display: flex;
+    background-color: #f8f8f8;
+    border-bottom: 1px solid #eee;
+}
+
+.info-item {
+    flex: 1;
+    text-align: center;
+    padding: 10px;
+    border-right: 1px solid #eee;
+}
+
+.info-item:last-child {
+    border-right: none;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: #666;
+    margin-bottom: 3px;
+}
+
+.info-value {
+    font-weight: bold;
+    font-size: 1.1rem;
+}
+
+.last-ball-info {
+    flex: 1.5;
+}
+
+/* Tab navigation */
+.match-center-tabs {
+    display: flex;
+    border-bottom: 1px solid #eee;
+}
+
+.tab-button {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 12px;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #666;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.tab-button:hover {
+    background-color: #f5f5f5;
+}
+
+.tab-button.active {
+    color: var(--primary-color);
+    border-bottom: 3px solid var(--primary-color);
+}
+
+/* Tab content */
+.match-center-content {
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.tab-content {
+    display: none;
+    padding: 15px;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Live updates section */
+#live-updates {
+    padding: 10px 0;
+}
+
+.ball-outcome, .innings-summary, .game-summary {
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    overflow: hidden;
+}
+
+.outcome-header, .summary-header {
+    background-color: var(--primary-color);
+    color: white;
+    padding: 10px 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.outcome-title, .summary-title {
+    font-weight: bold;
+}
+
+.outcome-result, .summary-result {
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.outcome-details, .summary-details {
+    padding: 15px;
+    line-height: 1.6;
+}
+
+.action-buttons {
+    padding: 0 15px 15px;
+    text-align: center;
+}
+
+.action-button {
+    background-color: var(--accent-color);
+    color: white;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 4px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: all 0.2s;
+}
+
+.action-button:hover {
+    background-color: #008c45;
+    transform: translateY(-2px);
+}
+
+.match-status-message {
+    padding: 10px;
+    text-align: center;
+    font-size: 1.1rem;
+    font-weight: bold;
+    color: var(--accent-color);
+}
+
+/* Commentary section */
+.commentary-list {
+    padding: 0;
+}
+
+.commentary-item {
+    padding: 10px 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.commentary-item:last-child {
+    border-bottom: none;
+}
+
+.commentary-time {
+    font-size: 0.8rem;
+    color: #888;
+    margin-bottom: 3px;
+}
+
+.commentary-text {
+    line-height: 1.5;
+}
+
+.highlight {
+    font-weight: bold;
+    color: var(--primary-color);
+}
+
+/* Scorecard section */
+.innings-selector {
+    display: flex;
+    margin-bottom: 15px;
+    border-bottom: 1px solid #eee;
+}
+
+.innings-tab {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px;
+    font-size: 0.9rem;
+    color: #666;
+    cursor: pointer;
+}
+
+.innings-tab.active {
+    color: var(--secondary-color);
+    font-weight: bold;
+    border-bottom: 2px solid var(--secondary-color);
+}
+
+.innings-details {
+    padding: 10px 0;
+}
+
+.innings-details.hidden {
+    display: none;
+}
+
+.scorecard-header {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 15px;
+    padding: 0 10px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.over-by-over {
+    padding: 0 10px;
+}
+
+.over-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+    display: flex;
+    align-items: center;
+}
+
+.over-num {
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 30px;
+}
+
+.over-balls {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.ball-item {
+    width: 25px;
+    height: 25px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: bold;
+}
+
+.ball-dot {
+    background-color: #eee;
+    color: #555;
+}
+
+.ball-runs {
+    background-color: var(--accent-color);
+    color: white;
+}
+
+.ball-wicket {
+    background-color: #d9534f;
+    color: white;
+}
+
+.ball-six {
+    background-color: #5cb85c;
+    color: white;
+}
+
+.ball-four {
+    background-color: #5bc0de;
+    color: white;
+}
+
+/* Final scorecard */
+.final-scorecard {
+    background-color: #f0f0f0;
+    padding: 15px;
+    margin: 10px 0;
+    border-radius: 4px;
+}
+
+.final-score-item {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 5px;
+    font-size: 1.1rem;
+}
+
+.team-label {
+    font-weight: bold;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+    .match-center-header {
+        flex-direction: column;
+        gap: 15px;
+    }
+    
+    .info-label {
+        font-size: 0.7rem;
+    }
+    
+    .info-value {
+        font-size: 0.9rem;
+    }
+    
+    .tab-button {
+        font-size: 0.9rem;
+        padding: 10px 5px;
+    }
+}
