@@ -23,35 +23,8 @@ const Cards = {
             return true;
         } catch (error) {
             console.error('Error loading cards:', error);
-            
-            // For testing/demo purposes, create some sample cards
-            this.createSampleCards();
-            return true;
-        }
-    },
-    
-    /**
-     * Create sample cards for testing
-     */
-    createSampleCards: function() {
-        this.allCards = [];
-        for (let i = 1; i <= 100; i++) {
-            this.allCards.push({
-                id: i,
-                name: `Candidate ${i}`,
-                photo: `${CONFIG.PLACEHOLDER_IMAGE}?text=Candidate${i}`,
-                age: Math.floor(Math.random() * 40) + 30,
-                gender: Math.random() > 0.5 ? 'MALE' : 'FEMALE',
-                party: ['BJP', 'INC', 'AAP', 'YSRCP', 'DMK', 'TMC'][Math.floor(Math.random() * 6)],
-                vote_share: Math.floor(Math.random() * 50) + 20,
-                rank: Math.floor(Math.random() * 3) + 1,
-                constituency: `Constituency ${i}`,
-                state: ['Karnataka', 'Maharashtra', 'Tamil Nadu', 'Uttar Pradesh', 'West Bengal'][Math.floor(Math.random() * 5)],
-                type: ['GEN', 'SC', 'ST', 'OBC'][Math.floor(Math.random() * 4)],
-                turnout: Math.floor(Math.random() * 30) + 60,
-                margin: Math.floor(Math.random() * 25) + 1,
-                female_turnout_edge: parseFloat((Math.random() * 5 - 2.5).toFixed(2))
-            });
+            alert('Error loading cards. Please check the console for details.');
+            return false;
         }
     },
     
