@@ -3,395 +3,243 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Game - Random 100 Cards</title>
+    <title>Card Game Display</title>
     <style>
-        :root {
-            --primary-color: #2c3e50;
-            --secondary-color: #3498db;
-            --accent-color: #e74c3c;
-            --background-color: #f9f9f9;
-            --card-background: #ffffff;
-            --text-color: #333;
-            --light-text: #777;
-        }
-        
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
         body {
-            background-color: var(--background-color);
-            color: var(--text-color);
-            padding: 2rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            padding: 20px;
         }
         
-        header {
-            text-align: center;
-            margin-bottom: 2rem;
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
         }
         
         h1 {
-            color: var(--primary-color);
-            margin-bottom: 0.5rem;
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
         }
         
         .controls {
             display: flex;
             justify-content: center;
-            gap: 1rem;
-            margin-bottom: 2rem;
+            margin-bottom: 20px;
+            gap: 10px;
         }
         
         button {
-            background-color: var(--secondary-color);
+            padding: 10px 20px;
+            background-color: #4CAF50;
             color: white;
             border: none;
-            padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
+            font-size: 16px;
             transition: background-color 0.3s;
         }
         
         button:hover {
-            background-color: var(--primary-color);
-        }
-        
-        .loader {
-            text-align: center;
-            margin: 2rem 0;
-            display: none;
-        }
-        
-        .loading-spinner {
-            border: 4px solid rgba(0, 0, 0, 0.1);
-            border-left-color: var(--secondary-color);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto;
-        }
-        
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+            background-color: #45a049;
         }
         
         .cards-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            gap: 20px;
         }
         
         .card {
-            background-color: var(--card-background);
+            background-color: white;
             border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
             overflow: hidden;
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s;
         }
         
         .card:hover {
             transform: translateY(-5px);
-            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
         
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            padding: 1rem;
-            position: relative;
-        }
-        
-        .card-name {
-            font-size: 1.2rem;
-            margin-right: 60px;
-            word-break: break-word;
-        }
-        
-        .card-party {
-            position: absolute;
-            top: 1rem;
-            right: 1rem;
-            background-color: var(--secondary-color);
-            color: white;
-            padding: 0.3rem 0.5rem;
-            border-radius: 4px;
-            font-size: 0.8rem;
-            font-weight: bold;
-        }
-        
-        .card-image {
+        .card-img {
             width: 100%;
-            height: 200px;
+            height: 240px;
             object-fit: cover;
-            display: block;
+            border-bottom: 1px solid #eee;
         }
         
         .card-content {
-            padding: 1rem;
+            padding: 15px;
         }
         
-        .card-detail {
-            margin-bottom: 0.5rem;
-            display: flex;
-            justify-content: space-between;
-        }
-        
-        .card-label {
+        .card-name {
+            font-size: 18px;
             font-weight: bold;
-            color: var(--light-text);
+            margin-bottom: 5px;
+            color: #333;
         }
         
-        .card-value {
-            text-align: right;
-        }
-        
-        .card-rank {
+        .card-party {
             display: inline-block;
-            padding: 0.2rem 0.5rem;
-            border-radius: 4px;
-            font-weight: bold;
+            padding: 4px 8px;
+            background-color: #007bff;
             color: white;
+            font-weight: bold;
+            border-radius: 4px;
+            margin-bottom: 10px;
+        }
+        
+        .card-info {
+            margin-bottom: 8px;
+            font-size: 14px;
+            color: #555;
+        }
+        
+        .card-info span {
+            font-weight: bold;
+            color: #333;
         }
         
         .rank-1 {
-            background-color: #f1c40f;
+            border: 3px solid gold;
         }
         
-        .rank-2 {
-            background-color: #95a5a6;
-        }
-        
-        .rank-3 {
-            background-color: #d35400;
-        }
-        
-        .rank-other {
-            background-color: #7f8c8d;
-        }
-        
-        .vote-share {
-            font-weight: bold;
-            color: var(--primary-color);
-        }
-        
-        .margin-positive {
-            color: #27ae60;
-        }
-        
-        .margin-negative {
-            color: var(--accent-color);
-        }
-        
-        .no-cards-message {
+        .loading {
             text-align: center;
-            font-size: 1.2rem;
-            color: var(--light-text);
-            margin: 3rem 0;
+            font-size: 24px;
+            margin: 50px 0;
         }
         
-        /* Responsive adjustments */
-        @media (max-width: 768px) {
-            body {
-                padding: 1rem;
-            }
-            
+        @media (max-width: 600px) {
             .cards-container {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
+                grid-template-columns: 1fr;
             }
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1>Card Game - Random 100 Cards</h1>
-        <p>Displaying 100 randomly selected cards from the dataset</p>
-    </header>
-    
-    <div class="controls">
-        <button id="refreshBtn">Get New Random Selection</button>
-        <button id="sortByRankBtn">Sort by Rank</button>
-        <button id="sortByVoteShareBtn">Sort by Vote Share</button>
-    </div>
-    
-    <div id="loader" class="loader">
-        <div class="loading-spinner"></div>
-        <p>Loading cards...</p>
-    </div>
-    
-    <div id="cardsContainer" class="cards-container">
-        <div class="no-cards-message" id="noCardsMessage">
-            Loading cards.json file...
+    <div class="container">
+        <h1>Random Card Selection</h1>
+        
+        <div class="controls">
+            <button id="refreshBtn">Generate New Random Selection</button>
         </div>
+        
+        <div id="loading" class="loading">Loading cards...</div>
+        <div id="cardsContainer" class="cards-container"></div>
     </div>
     
     <script>
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', () => {
+            // DOM elements
             const cardsContainer = document.getElementById('cardsContainer');
-            const noCardsMessage = document.getElementById('noCardsMessage');
-            const loader = document.getElementById('loader');
+            const loadingElement = document.getElementById('loading');
             const refreshBtn = document.getElementById('refreshBtn');
-            const sortByRankBtn = document.getElementById('sortByRankBtn');
-            const sortByVoteShareBtn = document.getElementById('sortByVoteShareBtn');
             
+            // Store all cards
             let allCards = [];
-            let selectedCards = [];
             
-            // Load cards from JSON file
-            async function loadCards() {
-                try {
-                    loader.style.display = 'block';
-                    noCardsMessage.textContent = 'Loading cards.json file...';
-                    
-                    const response = await window.fs.readFile('cards.json', { encoding: 'utf8' });
-                    const cardsData = JSON.parse(response);
-                    
-                    // Convert object to array
-                    allCards = Object.values(cardsData);
-                    
-                    selectRandomCards();
-                    displayCards();
-                    
-                    loader.style.display = 'none';
-                } catch (error) {
-                    console.error('Error loading cards:', error);
-                    noCardsMessage.textContent = 'Error loading cards.json file. Please make sure the file exists and is properly formatted.';
-                    loader.style.display = 'none';
-                }
+            // Function to get random cards
+            function getRandomCards(cards, count) {
+                const shuffled = [...cards].sort(() => 0.5 - Math.random());
+                return shuffled.slice(0, count);
             }
             
-            // Select 100 random cards
-            function selectRandomCards() {
-                if (allCards.length === 0) return;
-                
-                // If we have fewer than 100 cards, use all of them
-                if (allCards.length <= 100) {
-                    selectedCards = [...allCards];
-                    return;
-                }
-                
-                // Randomly select 100 cards
-                const shuffled = [...allCards].sort(() => 0.5 - Math.random());
-                selectedCards = shuffled.slice(0, 100);
-            }
-            
-            // Display cards in the container
-            function displayCards() {
-                if (selectedCards.length === 0) {
-                    noCardsMessage.style.display = 'block';
-                    return;
-                }
-                
-                noCardsMessage.style.display = 'none';
+            // Function to display cards
+            function displayCards(cards) {
                 cardsContainer.innerHTML = '';
                 
-                selectedCards.forEach(card => {
-                    const cardElement = createCardElement(card);
+                cards.forEach(card => {
+                    // Create card elements
+                    const cardElement = document.createElement('div');
+                    cardElement.className = `card ${card.rank === 1 ? 'rank-1' : ''}`;
+                    
+                    // Card content
+                    cardElement.innerHTML = `
+                        <img class="card-img" src="${card.photo}" alt="${card.name}" onerror="this.src='https://via.placeholder.com/300x240?text=No+Image'">
+                        <div class="card-content">
+                            <div class="card-name">${card.name}</div>
+                            <div class="card-party" style="background-color: ${getPartyColor(card.party)}">${card.party}</div>
+                            <div class="card-info">Age: <span>${card.age}</span> | Gender: <span>${card.gender}</span></div>
+                            <div class="card-info">Constituency: <span>${card.constituency}</span></div>
+                            <div class="card-info">State: <span>${card.state}</span></div>
+                            <div class="card-info">Vote Share: <span>${card.vote_share}%</span></div>
+                            <div class="card-info">Rank: <span>${card.rank}</span> | Margin: <span>${card.margin}%</span></div>
+                        </div>
+                    `;
+                    
                     cardsContainer.appendChild(cardElement);
                 });
             }
             
-            // Create a card element from a card object
-            function createCardElement(card) {
-                const cardDiv = document.createElement('div');
-                cardDiv.className = 'card';
+            // Function to get party color
+            function getPartyColor(party) {
+                const partyColors = {
+                    'BJP': '#FF9933',
+                    'INC': '#0078D7', 
+                    'AITC': '#00FF00',
+                    'BSP': '#0000FF',
+                    'CPI(M)': '#FF0000',
+                    'NCP': '#FFA500',
+                    'SP': '#FF0000',
+                    'AAP': '#1AAE9F',
+                    'ShivSena': '#F26522',
+                    'TDP': '#FFFF00',
+                    'DMK': '#FF0000',
+                    'YSRCP': '#4169E1',
+                    'JD(U)': '#008000',
+                    'RJD': '#008000',
+                    'BJD': '#008000',
+                    'TRS': '#FF1493',
+                    'IND': '#808080'
+                };
                 
-                // Get rank class
-                let rankClass = 'rank-other';
-                if (card.rank === 1) rankClass = 'rank-1';
-                else if (card.rank === 2) rankClass = 'rank-2';
-                else if (card.rank === 3) rankClass = 'rank-3';
-                
-                // Determine margin class
-                const marginClass = card.margin > 0 ? 'margin-positive' : 'margin-negative';
-                
-                // Create card HTML
-                cardDiv.innerHTML = `
-                    <div class="card-header">
-                        <div class="card-name">${card.name}</div>
-                        <div class="card-party">${card.party}</div>
-                    </div>
-                    <img src="${card.photo}" alt="${card.name}" class="card-image" onerror="this.src='/api/placeholder/280/200'; this.alt='Image not available'">
-                    <div class="card-content">
-                        <div class="card-detail">
-                            <span class="card-label">Constituency:</span>
-                            <span class="card-value">${card.constituency}</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">State:</span>
-                            <span class="card-value">${card.state}</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Type:</span>
-                            <span class="card-value">${card.type}</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Vote Share:</span>
-                            <span class="card-value vote-share">${card.vote_share}%</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Rank:</span>
-                            <span class="card-value">
-                                <span class="card-rank ${rankClass}">#${card.rank}</span>
-                            </span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Margin:</span>
-                            <span class="card-value ${marginClass}">${card.margin.toFixed(2)}%</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Turnout:</span>
-                            <span class="card-value">${card.turnout}%</span>
-                        </div>
-                        <div class="card-detail">
-                            <span class="card-label">Gender/Age:</span>
-                            <span class="card-value">${card.gender}, ${card.age}</span>
-                        </div>
-                    </div>
-                `;
-                
-                return cardDiv;
+                return partyColors[party] || '#6c757d';
             }
             
-            // Refresh the selection of random cards
-            refreshBtn.addEventListener('click', function() {
-                loader.style.display = 'block';
-                // Use setTimeout to show the loading indicator before processing
-                setTimeout(() => {
-                    selectRandomCards();
-                    displayCards();
-                    loader.style.display = 'none';
-                }, 200);
-            });
+            // Load cards data
+            async function loadCardsData() {
+                try {
+                    loadingElement.style.display = 'block';
+                    cardsContainer.style.display = 'none';
+                    
+                    const response = await fetch('cards.json');
+                    const data = await response.json();
+                    
+                    // Convert object to array
+                    allCards = Object.values(data);
+                    
+                    // Get 100 random cards
+                    const randomCards = getRandomCards(allCards, 100);
+                    
+                    // Display cards
+                    displayCards(randomCards);
+                    
+                    loadingElement.style.display = 'none';
+                    cardsContainer.style.display = 'grid';
+                } catch (error) {
+                    console.error('Error loading cards:', error);
+                    loadingElement.textContent = 'Error loading cards. Please try again.';
+                }
+            }
             
-            // Sort cards by rank
-            sortByRankBtn.addEventListener('click', function() {
-                loader.style.display = 'block';
-                // Use setTimeout to show the loading indicator before processing
-                setTimeout(() => {
-                    selectedCards.sort((a, b) => a.rank - b.rank);
-                    displayCards();
-                    loader.style.display = 'none';
-                }, 200);
-            });
-            
-            // Sort cards by vote share
-            sortByVoteShareBtn.addEventListener('click', function() {
-                loader.style.display = 'block';
-                // Use setTimeout to show the loading indicator before processing
-                setTimeout(() => {
-                    selectedCards.sort((a, b) => b.vote_share - a.vote_share);
-                    displayCards();
-                    loader.style.display = 'none';
-                }, 200);
+            // Event listener for refresh button
+            refreshBtn.addEventListener('click', () => {
+                if (allCards.length > 0) {
+                    const randomCards = getRandomCards(allCards, 100);
+                    displayCards(randomCards);
+                }
             });
             
             // Initial load
-            loadCards();
+            loadCardsData();
         });
     </script>
 </body>
