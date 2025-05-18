@@ -3,238 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Card Game Display</title>
+    <title>Candidate Cards</title>
     <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background-color: #f5f5f5;
             padding: 20px;
-        }
-        
-        .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
         h1 {
             text-align: center;
-            margin-bottom: 30px;
             color: #333;
+            margin-bottom: 30px;
         }
-        
         .controls {
             display: flex;
-            justify-content: center;
+            justify-content: space-between;
             margin-bottom: 20px;
+            align-items: center;
+        }
+        .search-container {
+            display: flex;
             gap: 10px;
         }
-        
+        input {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
         button {
-            padding: 10px 20px;
+            padding: 8px 15px;
             background-color: #4CAF50;
             color: white;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 16px;
             transition: background-color 0.3s;
         }
-        
         button:hover {
             background-color: #45a049;
         }
-        
-        .cards-container {
+        #randomize {
+            background-color: #2196F3;
+        }
+        #randomize:hover {
+            background-color: #0b7dda;
+        }
+        .card-container {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 20px;
         }
-        
         .card {
             background-color: white;
             border-radius: 8px;
-            overflow: hidden;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s;
             padding: 15px;
+            transition: transform 0.3s;
         }
-        
         .card:hover {
             transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
         }
-        
-        .card-content {
-            width: 100%;
-        }
-        
-        .card-name {
-            font-size: 18px;
-            font-weight: bold;
-            margin-bottom: 5px;
+        .card h2 {
+            margin-top: 0;
             color: #333;
+            font-size: 1.2rem;
+            border-bottom: 2px solid #f0f0f0;
+            padding-bottom: 10px;
         }
-        
-        .card-party {
-            display: inline-block;
-            padding: 4px 8px;
-            background-color: #007bff;
-            color: white;
-            font-weight: bold;
-            border-radius: 4px;
-            margin-bottom: 10px;
-        }
-        
         .card-info {
-            margin-bottom: 8px;
-            font-size: 14px;
-            color: #555;
+            margin-top: 10px;
         }
-        
-        .card-info span {
+        .card-info p {
+            margin: 5px 0;
+            font-size: 0.9rem;
+        }
+        .party-tag {
+            display: inline-block;
+            padding: 3px 8px;
+            background-color: #e0e0e0;
+            border-radius: 15px;
+            font-size: 0.8rem;
             font-weight: bold;
+        }
+        .loader {
+            text-align: center;
+            padding: 40px;
+            font-size: 1.2rem;
+            color: #666;
+        }
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px solid #f0f0f0;
+            padding: 4px 0;
+        }
+        .info-label {
+            font-weight: 500;
+            color: #666;
+        }
+        .info-value {
             color: #333;
         }
-        
-        .rank-1 {
-            border: 3px solid gold;
+        .card-rank-1 {
+            background-color: #f8f8d7;
+            border-left: 5px solid gold;
         }
-        
-        .loading {
+        .card-rank-2 {
+            border-left: 5px solid silver;
+        }
+        .card-rank-3 {
+            border-left: 5px solid #cd7f32;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+            gap: 10px;
+        }
+        .pagination button {
+            min-width: 40px;
+            background-color: #ddd;
+            color: #333;
+        }
+        .pagination button.active {
+            background-color: #2196F3;
+            color: white;
+        }
+        .counter {
             text-align: center;
-            font-size: 24px;
-            margin: 50px 0;
+            margin-bottom: 20px;
+            color: #666;
         }
-        
-        @media (max-width: 600px) {
-            .cards-container {
-                grid-template-columns: 1fr;
-            }
+        #total-count {
+            font-weight: bold;
+        }
+        .filters {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>Random Card Selection</h1>
-        
-        <div class="controls">
-            <button id="refreshBtn">Generate New Random Selection</button>
+    <h1>Candidate Cards</h1>
+    
+    <div class="controls">
+        <div class="search-container">
+            <input type="text" id="search" placeholder="Search by name, constituency...">
+            <button id="search-btn">Search</button>
         </div>
-        
-        <div id="loading" class="loading">Loading cards...</div>
-        <div id="cardsContainer" class="cards-container"></div>
+        <button id="randomize">Show 100 Random Cards</button>
     </div>
     
+    <div class="filters">
+        <select id="state-filter">
+            <option value="">All States</option>
+        </select>
+        <select id="party-filter">
+            <option value="">All Parties</option>
+        </select>
+        <select id="rank-filter">
+            <option value="">All Ranks</option>
+            <option value="1">Winners (Rank 1)</option>
+            <option value="2">Runners-up (Rank 2)</option>
+            <option value="3+">Rank 3 and below</option>
+        </select>
+    </div>
+    
+    <div class="counter">
+        Showing <span id="shown-count">0</span> of <span id="total-count">0</span> candidates
+    </div>
+    
+    <div id="card-container" class="card-container">
+        <div class="loader">Loading candidate data...</div>
+    </div>
+    
+    <div class="pagination" id="pagination"></div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', () => {
-            // DOM elements
-            const cardsContainer = document.getElementById('cardsContainer');
-            const loadingElement = document.getElementById('loading');
-            const refreshBtn = document.getElementById('refreshBtn');
+        // Variables for pagination
+        let allCandidates = [];
+        let filteredCandidates = [];
+        let currentPage = 1;
+        let cardsPerPage = 20;
+        
+        // Function to load the JSON data
+        async function loadCandidates() {
+            try {
+                const response = await fetch('cards.json');
+                const data = await response.json();
+                
+                // Convert object to array
+                allCandidates = Object.values(data);
+                
+                document.getElementById('total-count').textContent = allCandidates.length;
+                
+                // Populate filter dropdowns
+                populateFilterOptions();
+                
+                // Show random 100 cards initially
+                showRandomCards();
+                
+            } catch (error) {
+                console.error('Error loading candidate data:', error);
+                document.getElementById('card-container').innerHTML = 
+                    `<div class="loader">Error loading data. Please make sure cards.json is in the same directory.</div>`;
+            }
+        }
+        
+        // Function to populate filter dropdowns
+        function populateFilterOptions() {
+            // For states
+            const stateFilter = document.getElementById('state-filter');
+            const states = [...new Set(allCandidates.map(candidate => candidate.state))].sort();
             
-            // Store all cards
-            let allCards = [];
+            states.forEach(state => {
+                const option = document.createElement('option');
+                option.value = state;
+                option.textContent = state;
+                stateFilter.appendChild(option);
+            });
             
-            // Function to get random cards
-            function getRandomCards(cards, count) {
-                const shuffled = [...cards].sort(() => 0.5 - Math.random());
-                return shuffled.slice(0, count);
+            // For parties
+            const partyFilter = document.getElementById('party-filter');
+            const parties = [...new Set(allCandidates.map(candidate => candidate.party))].sort();
+            
+            parties.forEach(party => {
+                const option = document.createElement('option');
+                option.value = party;
+                option.textContent = party;
+                partyFilter.appendChild(option);
+            });
+        }
+        
+        // Function to show 100 random cards
+        function showRandomCards() {
+            // Get 100 random candidates
+            const shuffled = [...allCandidates].sort(() => 0.5 - Math.random());
+            filteredCandidates = shuffled.slice(0, 100);
+            
+            // Reset filters and search
+            document.getElementById('search').value = '';
+            document.getElementById('state-filter').value = '';
+            document.getElementById('party-filter').value = '';
+            document.getElementById('rank-filter').value = '';
+            
+            // Reset to first page
+            currentPage = 1;
+            
+            // Update displayed cards
+            updateCardDisplay();
+        }
+        
+        // Function to filter candidates
+        function filterCandidates() {
+            const searchTerm = document.getElementById('search').value.toLowerCase();
+            const stateFilter = document.getElementById('state-filter').value;
+            const partyFilter = document.getElementById('party-filter').value;
+            const rankFilter = document.getElementById('rank-filter').value;
+            
+            filteredCandidates = allCandidates.filter(candidate => {
+                // Search filter
+                const matchesSearch = 
+                    searchTerm === '' || 
+                    candidate.name.toLowerCase().includes(searchTerm) ||
+                    candidate.constituency.toLowerCase().includes(searchTerm) ||
+                    candidate.state.toLowerCase().includes(searchTerm) ||
+                    candidate.party.toLowerCase().includes(searchTerm);
+                
+                // State filter
+                const matchesState = stateFilter === '' || candidate.state === stateFilter;
+                
+                // Party filter
+                const matchesParty = partyFilter === '' || candidate.party === partyFilter;
+                
+                // Rank filter
+                let matchesRank = true;
+                if (rankFilter === '1') {
+                    matchesRank = candidate.rank === 1;
+                } else if (rankFilter === '2') {
+                    matchesRank = candidate.rank === 2;
+                } else if (rankFilter === '3+') {
+                    matchesRank = candidate.rank >= 3;
+                }
+                
+                return matchesSearch && matchesState && matchesParty && matchesRank;
+            });
+            
+            // Reset to first page
+            currentPage = 1;
+            
+            // Update displayed cards
+            updateCardDisplay();
+        }
+        
+        // Function to create a card element
+        function createCardElement(candidate) {
+            const card = document.createElement('div');
+            card.className = `card ${candidate.rank === 1 ? 'card-rank-1' : candidate.rank === 2 ? 'card-rank-2' : candidate.rank === 3 ? 'card-rank-3' : ''}`;
+            
+            // Create header with name and party
+            card.innerHTML = `
+                <h2>${candidate.name} <span class="party-tag">${candidate.party}</span></h2>
+                <div class="card-info">
+                    <div class="info-row">
+                        <span class="info-label">ID:</span>
+                        <span class="info-value">${candidate.id}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Age:</span>
+                        <span class="info-value">${candidate.age}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Gender:</span>
+                        <span class="info-value">${candidate.gender}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Constituency:</span>
+                        <span class="info-value">${candidate.constituency}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">State:</span>
+                        <span class="info-value">${candidate.state}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Type:</span>
+                        <span class="info-value">${candidate.type}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Vote Share:</span>
+                        <span class="info-value">${candidate.vote_share}%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Rank:</span>
+                        <span class="info-value">${candidate.rank}</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Turnout:</span>
+                        <span class="info-value">${candidate.turnout}%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Margin:</span>
+                        <span class="info-value">${candidate.margin}%</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">Female Turnout Edge:</span>
+                        <span class="info-value">${candidate.female_turnout_edge}%</span>
+                    </div>
+                </div>
+            `;
+            
+            return card;
+        }
+        
+        // Function to update the pagination controls
+        function updatePagination() {
+            const totalPages = Math.ceil(filteredCandidates.length / cardsPerPage);
+            const paginationElement = document.getElementById('pagination');
+            paginationElement.innerHTML = '';
+            
+            // Previous button
+            const prevButton = document.createElement('button');
+            prevButton.textContent = '←';
+            prevButton.disabled = currentPage === 1;
+            prevButton.addEventListener('click', () => {
+                if (currentPage > 1) {
+                    currentPage--;
+                    updateCardDisplay();
+                }
+            });
+            paginationElement.appendChild(prevButton);
+            
+            // Page buttons
+            let startPage = Math.max(1, currentPage - 2);
+            let endPage = Math.min(totalPages, startPage + 4);
+            
+            if (endPage - startPage < 4) {
+                startPage = Math.max(1, endPage - 4);
             }
             
-            // Function to display cards
-            function displayCards(cards) {
-                cardsContainer.innerHTML = '';
-                
-                cards.forEach(card => {
-                    // Create card elements
-                    const cardElement = document.createElement('div');
-                    cardElement.className = `card ${card.rank === 1 ? 'rank-1' : ''}`;
-                    
-                    // Card content
-                    cardElement.innerHTML = `
-                        <img class="card-img" src="${card.photo}" alt="${card.name}" onerror="this.src='https://via.placeholder.com/300x240?text=No+Image'">
-                        <div class="card-content">
-                            <div class="card-name">${card.name}</div>
-                            <div class="card-party" style="background-color: ${getPartyColor(card.party)}">${card.party}</div>
-                            <div class="card-info">Age: <span>${card.age}</span> | Gender: <span>${card.gender}</span></div>
-                            <div class="card-info">Constituency: <span>${card.constituency}</span></div>
-                            <div class="card-info">State: <span>${card.state}</span></div>
-                            <div class="card-info">Vote Share: <span>${card.vote_share}%</span></div>
-                            <div class="card-info">Rank: <span>${card.rank}</span> | Margin: <span>${card.margin}%</span></div>
-                        </div>
-                    `;
-                    
-                    cardsContainer.appendChild(cardElement);
+            for (let i = startPage; i <= endPage; i++) {
+                const pageButton = document.createElement('button');
+                pageButton.textContent = i;
+                pageButton.classList.toggle('active', i === currentPage);
+                pageButton.addEventListener('click', () => {
+                    currentPage = i;
+                    updateCardDisplay();
+                });
+                paginationElement.appendChild(pageButton);
+            }
+            
+            // Next button
+            const nextButton = document.createElement('button');
+            nextButton.textContent = '→';
+            nextButton.disabled = currentPage === totalPages;
+            nextButton.addEventListener('click', () => {
+                if (currentPage < totalPages) {
+                    currentPage++;
+                    updateCardDisplay();
+                }
+            });
+            paginationElement.appendChild(nextButton);
+        }
+        
+        // Function to update card display with pagination
+        function updateCardDisplay() {
+            const cardContainer = document.getElementById('card-container');
+            cardContainer.innerHTML = '';
+            
+            document.getElementById('shown-count').textContent = filteredCandidates.length;
+            
+            // Calculate start and end indices for current page
+            const startIndex = (currentPage - 1) * cardsPerPage;
+            const endIndex = Math.min(startIndex + cardsPerPage, filteredCandidates.length);
+            
+            // Get candidates for current page
+            const currentCandidates = filteredCandidates.slice(startIndex, endIndex);
+            
+            if (currentCandidates.length === 0) {
+                cardContainer.innerHTML = '<div class="loader">No candidates match your filters.</div>';
+            } else {
+                // Create and append card elements
+                currentCandidates.forEach(candidate => {
+                    const cardElement = createCardElement(candidate);
+                    cardContainer.appendChild(cardElement);
                 });
             }
             
-            // Function to get party color
-            function getPartyColor(party) {
-                const partyColors = {
-                    'BJP': '#FF9933',
-                    'INC': '#0078D7', 
-                    'AITC': '#00FF00',
-                    'BSP': '#0000FF',
-                    'CPI(M)': '#FF0000',
-                    'NCP': '#FFA500',
-                    'SP': '#FF0000',
-                    'AAP': '#1AAE9F',
-                    'ShivSena': '#F26522',
-                    'TDP': '#FFFF00',
-                    'DMK': '#FF0000',
-                    'YSRCP': '#4169E1',
-                    'JD(U)': '#008000',
-                    'RJD': '#008000',
-                    'BJD': '#008000',
-                    'TRS': '#FF1493',
-                    'IND': '#808080'
-                };
-                
-                return partyColors[party] || '#6c757d';
-            }
-            
-            // Load cards data
-            async function loadCardsData() {
-                try {
-                    loadingElement.style.display = 'block';
-                    cardsContainer.style.display = 'none';
-                    
-                    const response = await fetch('cards.json');
-                    const data = await response.json();
-                    
-                    // Convert object to array
-                    allCards = Object.values(data);
-                    
-                    // Get 100 random cards
-                    const randomCards = getRandomCards(allCards, 100);
-                    
-                    // Display cards
-                    displayCards(randomCards);
-                    
-                    loadingElement.style.display = 'none';
-                    cardsContainer.style.display = 'grid';
-                } catch (error) {
-                    console.error('Error loading cards:', error);
-                    loadingElement.textContent = 'Error loading cards. Please try again.';
-                }
-            }
-            
-            // Event listener for refresh button
-            refreshBtn.addEventListener('click', () => {
-                if (allCards.length > 0) {
-                    const randomCards = getRandomCards(allCards, 100);
-                    displayCards(randomCards);
-                }
-            });
-            
-            // Initial load
-            loadCardsData();
+            // Update pagination
+            updatePagination();
+        }
+        
+        // Event listeners
+        document.getElementById('randomize').addEventListener('click', showRandomCards);
+        document.getElementById('search-btn').addEventListener('click', filterCandidates);
+        document.getElementById('search').addEventListener('keyup', (e) => {
+            if (e.key === 'Enter') filterCandidates();
         });
+        document.getElementById('state-filter').addEventListener('change', filterCandidates);
+        document.getElementById('party-filter').addEventListener('change', filterCandidates);
+        document.getElementById('rank-filter').addEventListener('change', filterCandidates);
+        
+        // Load candidates when page loads
+        window.addEventListener('load', loadCandidates);
     </script>
 </body>
 </html>
