@@ -52,15 +52,16 @@
         }
         .card-container {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 15px;
         }
         .card {
             background-color: white;
             border-radius: 8px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            padding: 15px;
+            padding: 10px;
             transition: transform 0.3s;
+            font-size: 0.9rem;
         }
         .card:hover {
             transform: translateY(-5px);
@@ -69,16 +70,17 @@
         .card h2 {
             margin-top: 0;
             color: #333;
-            font-size: 1.2rem;
+            font-size: 1rem;
             border-bottom: 2px solid #f0f0f0;
-            padding-bottom: 10px;
+            padding-bottom: 8px;
+            margin-bottom: 8px;
         }
         .card-info {
-            margin-top: 10px;
+            margin-top: 8px;
         }
         .card-info p {
-            margin: 5px 0;
-            font-size: 0.9rem;
+            margin: 3px 0;
+            font-size: 0.8rem;
         }
         .party-tag {
             display: inline-block;
@@ -98,7 +100,8 @@
             display: flex;
             justify-content: space-between;
             border-bottom: 1px solid #f0f0f0;
-            padding: 4px 0;
+            padding: 2px 0;
+            font-size: 0.8rem;
         }
         .info-label {
             font-weight: 500;
@@ -186,15 +189,11 @@
     <div id="card-container" class="card-container">
         <div class="loader">Loading candidate data...</div>
     </div>
-    
-    <div class="pagination" id="pagination"></div>
 
     <script>
-        // Variables for pagination
+        // Variables
         let allCandidates = [];
         let filteredCandidates = [];
-        let currentPage = 1;
-        let cardsPerPage = 20;
         
         // Function to load the JSON data
         async function loadCandidates() {
@@ -257,9 +256,6 @@
             document.getElementById('party-filter').value = '';
             document.getElementById('rank-filter').value = '';
             
-            // Reset to first page
-            currentPage = 1;
-            
             // Update displayed cards
             updateCardDisplay();
         }
@@ -298,9 +294,6 @@
                 
                 return matchesSearch && matchesState && matchesParty && matchesRank;
             });
-            
-            // Reset to first page
-            currentPage = 1;
             
             // Update displayed cards
             updateCardDisplay();
@@ -365,82 +358,22 @@
             return card;
         }
         
-        // Function to update the pagination controls
-        function updatePagination() {
-            const totalPages = Math.ceil(filteredCandidates.length / cardsPerPage);
-            const paginationElement = document.getElementById('pagination');
-            paginationElement.innerHTML = '';
-            
-            // Previous button
-            const prevButton = document.createElement('button');
-            prevButton.textContent = '←';
-            prevButton.disabled = currentPage === 1;
-            prevButton.addEventListener('click', () => {
-                if (currentPage > 1) {
-                    currentPage--;
-                    updateCardDisplay();
-                }
-            });
-            paginationElement.appendChild(prevButton);
-            
-            // Page buttons
-            let startPage = Math.max(1, currentPage - 2);
-            let endPage = Math.min(totalPages, startPage + 4);
-            
-            if (endPage - startPage < 4) {
-                startPage = Math.max(1, endPage - 4);
-            }
-            
-            for (let i = startPage; i <= endPage; i++) {
-                const pageButton = document.createElement('button');
-                pageButton.textContent = i;
-                pageButton.classList.toggle('active', i === currentPage);
-                pageButton.addEventListener('click', () => {
-                    currentPage = i;
-                    updateCardDisplay();
-                });
-                paginationElement.appendChild(pageButton);
-            }
-            
-            // Next button
-            const nextButton = document.createElement('button');
-            nextButton.textContent = '→';
-            nextButton.disabled = currentPage === totalPages;
-            nextButton.addEventListener('click', () => {
-                if (currentPage < totalPages) {
-                    currentPage++;
-                    updateCardDisplay();
-                }
-            });
-            paginationElement.appendChild(nextButton);
-        }
-        
-        // Function to update card display with pagination
+        // Function to update card display 
         function updateCardDisplay() {
             const cardContainer = document.getElementById('card-container');
             cardContainer.innerHTML = '';
             
             document.getElementById('shown-count').textContent = filteredCandidates.length;
             
-            // Calculate start and end indices for current page
-            const startIndex = (currentPage - 1) * cardsPerPage;
-            const endIndex = Math.min(startIndex + cardsPerPage, filteredCandidates.length);
-            
-            // Get candidates for current page
-            const currentCandidates = filteredCandidates.slice(startIndex, endIndex);
-            
-            if (currentCandidates.length === 0) {
+            if (filteredCandidates.length === 0) {
                 cardContainer.innerHTML = '<div class="loader">No candidates match your filters.</div>';
             } else {
                 // Create and append card elements
-                currentCandidates.forEach(candidate => {
+                filteredCandidates.forEach(candidate => {
                     const cardElement = createCardElement(candidate);
                     cardContainer.appendChild(cardElement);
                 });
             }
-            
-            // Update pagination
-            updatePagination();
         }
         
         // Event listeners
