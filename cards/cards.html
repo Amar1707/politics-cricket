@@ -164,7 +164,7 @@
             <input type="text" id="search" placeholder="Search by name, constituency...">
             <button id="search-btn">Search</button>
         </div>
-        <button id="randomize">Show 100 Random Cards</button>
+        <button id="randomize">Show 240 Random Cards</button>
     </div>
     
     <div class="filters">
@@ -244,11 +244,11 @@
             });
         }
         
-        // Function to show 100 random cards
+        // Function to show 240 random cards
         function showRandomCards() {
-            // Get 100 random candidates
+            // Get 240 random candidates
             const shuffled = [...allCandidates].sort(() => 0.5 - Math.random());
-            filteredCandidates = shuffled.slice(0, 100);
+            filteredCandidates = shuffled.slice(0, 240);
             
             // Reset filters and search
             document.getElementById('search').value = '';
